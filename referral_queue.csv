@@ -1,0 +1,120 @@
+queue_position,customer_id,risk_score,recommended_action,explanation
+1,662,0.907,Escalate for manual review,"REASONS:
+- The customer received 5 quotes with a first-to-lowest premium drop of 31.59%.
+- The largest single premium drop was 16.4% between quote 1 and quote 2.
+- The customer made 7 suspicious field edits across the quote journey.
+
+ACTION: Escalate for manual review"
+2,268,0.906,Escalate for manual review,"REASONS:
+- The customer had 9 suspicious field edits across the quote journey.
+- The customer had a high suspicious step ratio of 0.8.
+- The customer's premium dropped by 29.96% from the first quote to the lowest quote.
+
+ACTION: Escalate for manual review."
+3,191,0.875,Escalate for manual review,"REASONS:
+- The customer had a high risk score of 0.875.
+- There were 6 quotes generated, with a first-to-lowest premium drop of 31.61%.
+- The customer made 6 suspicious field edits, with a suspicious step ratio of 0.8.
+
+ACTION: Escalate for manual review."
+4,407,0.872,Escalate for manual review,"REASONS:
+- The customer received 4 quotes with a total premium drop of 27.82%.
+- The largest single premium drop was 20.68%.
+- The customer made 4 material edits and 4 suspicious field edits during the quote journey.
+
+ACTION: Escalate for manual review."
+5,943,0.872,Escalate for manual review,"REASONS:
+- The customer's risk score is high at 0.872, indicating a potentially higher risk profile.
+- The customer made 6 suspicious field edits, which may warrant review.
+- The largest single premium drop percentage was 19.41, which is relatively high.
+
+ACTION: Escalate for manual review."
+6,863,0.867,Escalate for manual review,"REASONS:
+- The customer's risk score is high (0.867), indicating a potentially higher premium.
+- There are multiple quotes with significant premium drops (largest single drop: 14.15%, total drop: 27.99%).
+- The customer made several material edits (6) and suspicious field edits (5) during the quote journey.
+
+ACTION: Escalate for manual review."
+7,907,0.8,Request additional validation,"REASONS:
+- The customer received 6 quotes with a first-to-lowest premium drop of 25.36%.
+- The customer made material edits (5) and suspicious field edits (4) during the quote journey.
+- The largest single premium drop was 17.76%.
+
+ACTION: Request additional validation."
+8,1000,0.768,Request additional validation,"REASONS:
+- The customer has a high risk score of 0.768.
+- There are 4 quotes with a significant first-to-lowest premium drop of 24.22%.
+- The customer made 4 suspicious field edits across the quote journey.
+
+ACTION: Request additional validation."
+9,117,0.758,Request additional validation,"REASONS:
+- The customer made 4 quotes, with a first-to-lowest premium drop of 33.81%.
+- The customer made 2 material edits and 4 suspicious field edits.
+- The customer's annual mileage decreased by 2.7% across 2 quotes.
+
+ACTION: Request additional validation."
+10,958,0.745,Request additional validation,"REASONS:
+- The customer made 6 quotes with a first-to-lowest premium drop of 19.55%.
+- The customer edited 5 material fields and 6 suspicious fields across the quote journey.
+- The largest single premium drop was 22.99% between quote 1 and quote 6.
+
+ACTION: Request additional validation"
+11,988,0.732,Request additional validation,"REASONS:
+- The customer has a high risk score of 0.732.
+- There were 7 suspicious field edits, with a suspicious step ratio of 0.8.
+- The customer had 3 consistency violations.
+
+ACTION: Request additional validation"
+12,801,0.728,Request additional validation,"REASONS:
+- The customer had 5 quotes with a first-to-lowest premium drop of 18.43%.
+- The customer had 7 material edits and 5 suspicious field edits during the quote journey.
+- The customer's suspicious step ratio was 0.75, indicating potential inconsistencies.
+
+ACTION: Request additional validation."
+13,723,0.716,Request additional validation,"REASONS:
+- The customer's risk score is 0.716, which may warrant review.
+- The quote sequence shows a large drop in premium (25.0%) from the first quote to the lowest.
+- The customer made 4 suspicious field edits and had a suspicious step ratio of 0.67.
+
+ACTION: Request additional validation."
+14,76,0.715,Request additional validation,"REASONS:
+- The customer made 4 suspicious field edits across the quote journey.
+- The customer's annual mileage decreased by 2.1% in 3 consecutive quotes.
+- The customer's premium dropped by 25.24% from the first quote to the lowest premium quote.
+ACTION: Request additional validation."
+15,427,0.712,Request additional validation,"REASONS:
+- The customer had 4 suspicious field edits across the quote journey.
+- The suspicious step ratio was 0.8, indicating a high proportion of suspicious quotes.
+- The customer had 2 consistency violations across the quote journey.
+
+ACTION: Request additional validation"
+16,492,0.707,Request additional validation,"REASONS:
+- The customer made 4 suspicious field edits across the quote journey.
+- The customer's annual mileage decreased by 2.0 units across the quote journey.
+- The customer's premium dropped by 27.04% from the first quote to the lowest premium quote.
+
+ACTION: Request additional validation."
+17,141,0.692,Request additional validation,"REASONS:
+- The customer had 5 quotes with a first-to-lowest premium drop of 24.13%.
+- The customer made 5 suspicious field edits and 3 material edits.
+- The customer's annual mileage decreased by 4.1% (from 19.0 to 14.9) across 4 quotes.
+
+ACTION: Request additional validation."
+18,159,0.677,Request additional validation,"REASONS:
+- The customer made 7 edits to suspicious fields across the quote journey.
+- The customer made 4 consecutive decreases in annual mileage.
+- The customer made 3 consecutive decreases in previous accidents.
+
+ACTION: Request additional validation."
+19,59,0.667,Request additional validation,"REASONS:
+- The customer had 5 suspicious field edits, which may warrant review.
+- The suspicious step ratio is 0.67, indicating a potential inconsistency.
+- The customer had a material edit count of 4, which may indicate multiple changes.
+
+ACTION: Request additional validation."
+20,711,0.631,Request additional validation,"REASONS:
+- The customer has a high risk score of 0.631.
+- There are 4 suspicious field edits, with a suspicious step ratio of 0.6.
+- The largest single drop in premium is 16.6%, which may warrant review.
+
+ACTION: Request additional validation."

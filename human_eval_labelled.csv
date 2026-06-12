@@ -1,0 +1,356 @@
+customer_id,prompt_version,explanation,human_groundedness,human_factual_correctness,human_conciseness,human_notes
+662,v1_basic,"Referral Explanation:
+
+This quote journey has been flagged for manual review due to the customer's consistent and significant changes to risk factors that result in a substantial drop in premium. The customer has made 7 material edits, with 7 suspicious field edits, indicating a deliberate attempt to manipulate the quote process.
+
+The customer has decreased their annual mileage by 2.9% on average across 3 quotes, and decreased their previous accidents by 1.67% on average across 3 quotes. This suggests a pattern of risk reduction that is not typical of a genuine customer seeking the best quote.
+
+The largest single drop in premium was 16.4%, and the overall premium dropped by 31.59% from the first to the lowest quote. This significant reduction in premium, combined with the customer's deliberate changes to risk factors, warrants further investigation to ensure the quote journey is genuine and not manipulated.",0,1,0,"intent claim - ""deliberate attempt to manipulate"""
+662,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 662 requires review due to repeated quote attempts (5 quotes) and significant premium reductions (first quote to lowest premium drop of 31.59%). The customer's risk score is 0.907, indicating a relatively low-risk profile. However, there are material rating-factor edits (6 edits) and suspicious field changes (7 edits) throughout the quote sequence. The customer's annual mileage decreased by 3 steps, and previous accidents decreased by 3 steps, while driver experience increased by 2 steps. To ensure accurate pricing, we recommend escalating this case for manual review.",1,0,0,misinterprets risk score 0.907 as low-risk
+662,v3_structured,"REASONS:
+- The customer had 7 suspicious field edits.
+- The customer had a high suspicious step ratio of 1.0.
+- The largest single drop in premium was 16.4%.
+
+ACTION: Escalate for manual review.",1,1,1,
+268,v1_basic,"Referral Explanation:
+
+This quote journey has been flagged for manual review due to the customer's suspicious quote sequence behavior. The customer has made a significant number of material edits (6) and suspicious field edits (9) throughout the quote journey, resulting in a suspicious step ratio of 0.8. This suggests that the customer is actively manipulating their quote to achieve the lowest premium possible.
+
+Furthermore, the customer has made a series of consistent changes to their profile, including decreasing their annual mileage (3 times), decreasing their previous accidents (3 times), and increasing their driving experience (3 times). These changes have resulted in a significant drop in premium, with the first quote being 29.96% higher than the lowest quote. The largest single drop in premium was 18.15%.
+
+These behavioral patterns suggest that the customer may be attempting to manipulate their quote to achieve a lower premium, potentially in an attempt to avoid paying the correct premium for their risk level. As a result, this quote journey has been flagged for manual review to ensure that the customer's premium is accurately calculated based on their actual risk profile.",0,1,0,"intent claim - ""actively manipulating"""
+268,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 268 warrants review due to repeated quote attempts (6 quotes), significant premium reduction (29.96% drop from first to lowest premium), and multiple material rating-factor edits (6 edits). The customer also made suspicious field changes (9 edits) and exhibited inconsistent behavior (3 mileage decreases, 3 accident decreases, and 3 experience increases). The recommended action is to escalate for manual review.",1,1,1,
+268,v3_structured,"REASONS:
+- The customer made 9 suspicious field edits across the quote journey.
+- The customer's suspicious step ratio is 0.8, indicating a high proportion of suspicious steps.
+- The customer's risk score is 0.906, which is close to the threshold for manual review.
+
+ACTION: Escalate for manual review",1,1,1,
+191,v1_basic,"Referral Explanation:
+
+This quote journey has been flagged for manual review due to suspicious behavior exhibited by the customer. The customer has made significant changes to their profile across multiple quotes, with a high proportion of these changes resulting in a lower premium. Specifically, the customer has made 6 suspicious field edits, which is a significant proportion of the total 10 edits made across all quotes. Additionally, the customer has made multiple changes to their annual mileage, previous accidents, and driver experience, which are all fields that can be used to lower the premium.
+
+The customer's quote sequence also shows a pattern of gradual premium reduction, with the largest single drop being 14.03%. However, the first quote to lowest premium drop percentage is 31.61%, which is a significant reduction. This suggests that the customer may be intentionally manipulating their profile to obtain a lower premium.
+
+Overall, while the customer's risk score is relatively high (0.875), their quote journey behavior is suspicious and warrants further investigation to ensure that the customer is not taking advantage of the system to obtain a lower premium than they are eligible for.",0,1,0,"Very repetitive, intentionally, taking advantage"
+191,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 191 warrants review due to repeated quote attempts (6 quotes), significant premium reduction (31.61% drop from first to lowest quote), and material rating-factor edits (4 material edits and 6 suspicious field changes). The suspicious field change ratio is 0.8, indicating a high likelihood of inconsistent data. The customer's risk score is 0.875, which is relatively high. Recommended action: Escalate for manual review.",1,1,1,
+191,v3_structured,"REASONS:
+- The customer had 6 quotes with a first-to-lowest premium drop of 31.61%.
+- The customer made 6 suspicious field edits and had a suspicious step ratio of 0.8.
+- The customer had 4 material edits and 2 mileage decreases.
+
+ACTION: Escalate for manual review",1,1,1,
+407,v1_basic,"Referral Explanation:
+
+This quote journey has been flagged for manual review due to a high level of suspicious field edits and a consistent pattern of premium lowering across multiple quotes. The customer has made material edits to 4 fields, with 4 of these edits being to suspicious premium-lowering fields (annual mileage and previous accidents). 
+
+Notably, the customer's annual mileage has decreased by 2.1% in each subsequent quote, and the number of previous accidents has decreased by 1 in each subsequent quote. This suggests a deliberate attempt to manipulate the quote process to achieve a lower premium. 
+
+The largest single drop in premium was 20.68%, and the overall first-to-lowest premium drop was 27.82%. While these drops are significant, they are not unusual in and of themselves. However, when combined with the suspicious field edits and the consistent pattern of premium lowering, they raise concerns about the customer's intentions. 
+
+Therefore, this quote journey has been flagged for manual review to ensure that the customer's premium is accurately determined and that the quote process is being used fairly and honestly.",0,1,0,"intent ""deliberate"" stated"
+407,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 407 warrants review due to repeated quote attempts (4 quotes), significant premium reduction (27.82% drop from first to lowest quote), and multiple material rating-factor edits (4 edits). Additionally, there are suspicious field changes (4 edits) and a high suspicious step ratio (1.0). The customer's annual mileage decreased twice, while previous accidents decreased twice, and driver experience remained unchanged. The recommended action is to escalate for manual review to assess the validity of these changes.",1,1,1,
+407,v3_structured,"REASONS:
+- The customer received 4 quotes with a total premium drop of 27.82%.
+- The largest single quote premium drop was 20.68%.
+- The customer made 4 material edits and 4 suspicious field edits.
+
+ACTION: Escalate for manual review",1,1,1,
+943,v1_basic,"Referral Explanation:
+
+This quote journey was flagged due to the customer's consistent and significant edits to fields that are typically associated with a lower premium, specifically 'driver_experience' and 'previous_accidents'. The customer made a total of 6 suspicious field edits, with 4 of them being material edits, which is a high number considering the customer only received 5 quotes.
+
+The customer's experience was increased by 4 years across the quote sequence, which is an unusual pattern, as typically, experience would be increased by 1-2 years at a time. This suggests that the customer may be intentionally manipulating their experience to lower their premium.
+
+The customer's annual mileage was decreased by 1.6 units across the quote sequence, which is a moderate change, but when combined with the other suspicious edits, raises concerns about the customer's intentions.
+
+The customer's risk score is 0.872, which is relatively high, indicating that they are a higher-risk driver. However, the significant premium drops they experienced across the quote sequence (up to 25.51%) suggest that they may be taking advantage of the system to obtain a lower premium.
+
+Overall, the combination of these factors suggests that this quote journey warrants further review to ensure that the",0,1,0,"intent - ""intentionally manipulating"". The final sentence is cut off"
+943,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 943 warrants review due to repeated quote attempts (5 quotes) and significant premium reductions (first quote to lowest premium drop of 25.51%). The customer's risk score is 0.872, which is relatively high. Additionally, there are material rating-factor edits (4 edits) and suspicious field changes (6 edits) throughout the quote sequence. The customer's driver experience increased by 4 years across the quotes, while annual mileage and previous accidents decreased. The recommended action is to escalate for manual review.",1,0,1,"0.872 called relatively high then contradicts"
+943,v3_structured,"REASONS:
+- The customer has a high risk score (0.872) indicating potential for higher premiums.
+- The customer made 6 suspicious field edits and 4 material edits during the quote journey.
+- The largest single premium drop percentage (19.41%) may warrant review for consistency.
+
+ACTION: Escalate for manual review",1,1,1,
+863,v1_basic,"Referral Explanation:
+
+This quote journey has been flagged for manual review due to suspicious behavior. The customer has received 6 quotes with a significant premium drop of 27.99% from the first to the lowest premium. This suggests that the customer is actively seeking to minimize their premium costs.
+
+Furthermore, the customer has made material edits to their quote, with 6 fields changed across the 6 quotes. This indicates that the customer is carefully managing their quote information to achieve the lowest premium possible.
+
+Additionally, the customer has made suspicious edits to fields that are known to lower premiums, such as ""previous accidents"" and ""annual mileage"". These edits have resulted in a significant reduction in premium costs, suggesting that the customer is manipulating their quote information to achieve the lowest premium possible.
+
+The customer's quote sequence also shows a consistent pattern of reducing their premium costs by lowering their annual mileage and previous accidents. This suggests that the customer is intentionally manipulating their quote information to achieve the lowest premium possible.
+
+Overall, the combination of significant premium drops, material edits, and suspicious edits to premium-lowering fields suggests that this quote journey warrants manual review to ensure that the customer is not engaging in any potentially abusive behavior.",0,1,0,"Intentionally, manipulating"
+863,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 863 has been flagged for review due to repeated quote attempts (6 quotes), significant premium reduction (27.99% drop from first to lowest quote), and multiple material rating-factor edits (6 edits). The customer's annual mileage decreased 3 times, and previous accidents decreased 2 times, but driver experience remained unchanged. The suspicious field edit count is 5, with a suspicious step ratio of 1.0. The recommended action is to escalate for manual review to verify the accuracy of the customer's information and ensure fair pricing.",1,1,0,
+863,v3_structured,"REASONS:
+- The customer's risk score is high at 0.867, indicating a potentially higher risk.
+- There were 5 suspicious field edits out of 6 total edits, suggesting inconsistent input.
+- The largest single drop in premium was 14.15%, which may warrant review.
+
+ACTION: Escalate for manual review.",1,1,1,
+907,v1_basic,"Referral Explanation:
+
+This quote journey was flagged due to the customer's (ID 907) suspicious quote sequence behavior. The customer's risk score is 0.8, indicating a moderate level of risk.
+
+The strongest behavioral reasons for flagging this quote journey are:
+
+1. **Material edits**: The customer made 5 material edits throughout the quote journey, which is a significant number. This suggests that the customer is actively trying to manipulate the quote to achieve a lower premium.
+2. **Suspicious field edits**: The customer edited 4 suspicious fields, which is a high number. These fields include ""previous_accidents"" and ""annual_mileage"", which are often used to lower premiums.
+3. **Consistent premium lowering**: Despite the customer's risk score, the premiums decreased significantly throughout the quote journey, with the largest single drop being 17.76%. This suggests that the customer is trying to take advantage of the system to achieve an unreasonably low premium.
+4. **Quote sequence consistency**: The customer's quote sequence shows a consistent pattern of decreasing premiums, with each subsequent quote having a lower premium than the previous one. This is unusual and suggests that the customer is trying to manipulate the system.
+
+Overall, these behavioral",0,1,0,actively trying to manipulate
+907,v2_grounded_concise,"**Case Review Explanation**
+
+Customer ID: 907
+
+This quote journey may need review due to repeated quote attempts (6 quotes) and significant premium reductions (first quote to lowest premium drop of 25.36%). The customer's risk score is 0.8, indicating a relatively low-risk profile. However, there are material rating-factor edits (5 edits) and suspicious field changes (4 edits) throughout the journey.
+
+The customer's annual mileage decreased in 2 quotes, and previous accidents decreased in 2 quotes, while driver experience decreased in 1 quote. These changes may indicate a deliberate attempt to lower premiums.
+
+**Recommended Action:** Request additional validation to ensure the customer's information is accurate and to verify the legitimacy of the premium reductions.",0,0,0,"deliberate claim + 0.8 called low-risk
+"
+907,v3_structured,"REASONS:
+- The customer's risk score is 0.8, which is above the average risk score.
+- The customer made 5 material edits and 4 suspicious field edits during the quote journey.
+- The largest single drop in premium was 17.76%, which occurred between quotes 5 and 6.
+
+ACTION: Request additional validation",1,1,1,
+1000,v1_basic,"Referral Explanation:
+
+This quote journey was flagged due to the customer's suspicious behavior of making significant changes to their risk profile across multiple quotes, resulting in a substantial drop in premium. Specifically:
+
+- The customer made 4 suspicious field edits (e.g., annual mileage, previous accidents) across 4 quotes, which is a high ratio of 0.67.
+- The customer decreased their annual mileage by 2.5% and 9.2% in quotes 2 and 4, respectively, and decreased their previous accidents by 50% in quotes 2 and 4, respectively, which are significant changes that could lower their premium.
+- The customer's premium dropped by 24.22% from the first quote to the lowest premium quote, indicating a substantial reduction in risk.
+
+These changes suggest that the customer may be manipulating their risk profile to obtain a lower premium, warranting further validation to ensure the accuracy of the quote journey.",0,1,0,manipulating
+1000,v2_grounded_concise,"**Case Review Explanation**
+
+The customer's motor insurance quote journey has been flagged for review due to repeated quote attempts (4 quotes) and significant premium reductions (24.22% drop from first to lowest quote). There were 3 material rating-factor edits and 4 suspicious field changes, indicating inconsistent input. The suspicious step ratio is 0.67, suggesting a high likelihood of suspicious activity. The recommended action is to request additional validation to ensure accurate and consistent information.",1,1,1,
+1000,v3_structured,"REASONS:
+- The customer received 4 quotes with a first-to-lowest premium drop of 24.22%.
+- The customer made 4 suspicious field edits across the quote journey.
+- The customer's suspicious step ratio is 0.67, indicating potential inconsistency.
+
+ACTION: Request additional validation.",1,1,1,
+117,v1_basic,"Referral Explanation:
+
+This quote journey has been flagged due to the customer's consistent and significant changes to their risk profile, which resulted in a substantial drop in premium. The customer made material edits to their quote, including a decrease in annual mileage (2 times) and a decrease in previous accidents (1 time), while also increasing their driving experience (1 time). 
+
+The suspicious step ratio of 1.0 indicates that the customer's changes were made in a way that maximized the premium drop, with each subsequent quote showing a significant decrease in premium. This suggests that the customer may be intentionally manipulating their risk profile to obtain a lower premium. 
+
+The largest single drop in premium was 16.83%, and the first quote to lowest premium drop was 33.81%. This level of premium reduction is unusual and warrants further investigation. 
+
+Therefore, we recommend requesting additional validation to ensure that the customer's risk profile accurately reflects their actual circumstances.",0,1,0,"Intentionally, manipulating"
+117,v2_grounded_concise,"**Case Review Explanation**
+
+Customer ID: 117
+
+This customer's motor insurance quote journey may require review due to repeated quote attempts (4 quotes) and significant premium reductions (33.81% drop from first to lowest quote). The customer made material edits to their risk profile (2 material edits) and suspicious field changes (4 suspicious field edits), with a high suspicious step ratio (1.0). The customer also made consistent changes to lower their premium, decreasing mileage twice and reducing previous accidents once. The recommended action is to request additional validation to ensure the customer's risk profile accurately reflects their actual circumstances.",1,1,0,
+117,v3_structured,"REASONS:
+- The customer has a high risk score of 0.758.
+- There were 4 quotes generated, with a first-to-lowest premium drop of 33.81%.
+- The customer made 4 suspicious field edits, with a suspicious step ratio of 1.0.
+
+ACTION: Request additional validation.",1,1,1,
+958,v1_basic,"Referral Explanation:
+
+This quote journey was flagged due to the customer's suspicious behavior of making significant changes to their risk profile in order to lower their premium. The customer made 6 quotes, with the largest single drop in premium being 22.99%. 
+
+Notably, the customer made 5 material edits and 6 suspicious field edits throughout the quote journey, with a suspicious step ratio of 0.6. This indicates that the customer was actively trying to manipulate their risk profile to achieve a lower premium.
+
+The customer also made significant changes to their annual mileage, decreasing it by 3.5 units across 3 quotes, and made changes to their driver experience, increasing it by 2 years across 2 quotes. These changes resulted in a significant drop in premium, suggesting that the customer was trying to take advantage of the system.
+
+Overall, the customer's behavior suggests that they may be attempting to manipulate the system to achieve a lower premium, which warrants further investigation and validation.",0,1,0,actively trying to manipulate
+958,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 958 warrants review due to repeated quote attempts (6 attempts) and significant premium reductions (first quote to lowest premium drop of 19.55%). The customer's risk score is 0.745, which is not unusually high. However, there are material rating-factor edits (5 edits) and suspicious field changes (6 edits) throughout the quote sequence. The suspicious step ratio is 0.6, indicating a potential inconsistency in the customer's information. The recommended action is to request additional validation to ensure the customer's information is accurate and consistent.
+
+**Recommended Action:** Request additional validation.",1,1,0,
+958,v3_structured,"REASONS:
+- The customer made 6 quotes, with a first-to-lowest premium drop of 19.55%.
+- The customer edited 5 material fields and 6 suspicious fields across the quote journey.
+- The largest single premium drop was 22.99%, with 3 instances of mileage decrease and 1 instance of accident decrease.
+
+ACTION: Request additional validation",1,1,1,
+988,v1_basic,"Based on the provided case evidence, this quote journey was flagged due to the following behavioral reasons:
+
+1. **High number of quotes**: The customer received 6 quotes, which is a relatively high number. This may indicate that the customer is actively seeking to minimize their premium.
+2. **Material edits**: The customer made 5 material edits, which is a significant number. This suggests that the customer is actively trying to manipulate their quote to achieve a lower premium.
+3. **Suspicious field edits**: The customer made 7 suspicious field edits, which is a high number. This indicates that the customer is trying to manipulate their quote by changing fields that are not typically associated with premium reductions.
+4. **Consistency violations**: The customer had 3 consistency violations, which suggests that the customer is not providing consistent information across quotes.
+5. **Suspicious premium lowering fields**: The customer changed fields that are typically associated with premium reductions (annual mileage and previous accidents) in 4 out of 6 quotes. This suggests that the customer is trying to manipulate their quote to achieve a lower premium.
+
+Overall, these behavioral reasons suggest that the customer may be trying to manipulate their quote to achieve a lower premium, which warrants further investigation and validation.",0,1,0,"manipulate, actively trying to manipulate"
+988,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 988 has been flagged for review. The customer has made 6 quote attempts, with a significant premium reduction of 14.49% from the first to lowest quote. There were 5 material rating-factor edits and 7 suspicious field changes, indicating inconsistent information. The customer also made 3 suspicious field edits in 80% of quote attempts. The recommended action is to request additional validation to ensure accurate information and prevent potential mispricing.",1,1,1,
+988,v3_structured,"REASONS:
+- The customer had 7 suspicious field edits, which may warrant review.
+- The customer had a high suspicious step ratio of 0.8, indicating potential inconsistencies.
+- The customer's premium dropped by 14.49% from the first quote to the lowest premium quote.
+
+ACTION: Request additional validation.",1,1,1,
+801,v1_basic,"Referral Explanation:
+
+This quote journey has been flagged due to a high level of material edits (7) and suspicious field edits (5) across 5 quotes, resulting in a suspicious step ratio of 0.75. The customer's driver experience has been increased by 3 years across consecutive quotes, which is a significant change that may not be genuine. Additionally, the customer's previous accidents have been decreased by 1, and their annual mileage has been decreased by 1.9 miles across consecutive quotes. These changes have resulted in a large premium drop of up to 18.56%. The analyst recommends requesting additional validation to ensure the customer's information is accurate and to prevent potential over-insurance.",1,1,0,
+801,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 801 warrants review due to repeated quote attempts (5 attempts) and significant premium reductions (first quote to lowest premium drop of 18.43%). The journey also exhibits material rating-factor edits (7 edits) and suspicious field changes (5 edits, 75% of steps). Furthermore, there are inconsistencies in driver experience and previous accidents. The recommended action is to request additional validation to ensure accurate risk assessment and pricing.",1,1,1,
+801,v3_structured,"REASONS:
+- The customer has a high risk score of 0.728.
+- There are 5 quotes with a significant premium drop of up to 18.56%.
+- The customer made 7 material edits and 5 suspicious field edits.
+
+ACTION: Request additional validation.",1,1,1,
+723,v1_basic,"Referral Explanation:
+
+This quote journey has been flagged due to the customer's suspicious behavior of making significant changes to their risk profile across multiple quotes, resulting in a substantial premium drop. 
+
+Key behavioral reasons include:
+
+- The customer made 4 material edits to their quote, with 4 suspicious field edits, indicating a deliberate attempt to manipulate their risk profile.
+- The suspicious step ratio is 0.67, suggesting that the customer is actively trying to lower their premium by making strategic changes to their quote.
+- The customer decreased their annual mileage by 2.3% and their previous accidents by 50%, which are significant changes that could lower their premium.
+- The customer also increased their driving experience by 50%, which is an unusual change that could be an attempt to further lower their premium.
+
+These changes resulted in a significant premium drop of 25% from the first quote to the lowest premium quote, with the largest single drop being 22.08%. 
+
+Given the customer's suspicious behavior and the significant changes made to their risk profile, it is recommended to request additional validation to ensure the accuracy and legitimacy of the customer's quote journey.",0,1,0,"deliberate, actvely trying to manipulate"
+723,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 723 may need review due to repeated quote attempts (4 quotes) and significant premium reductions (25% drop in the first quote to lowest premium). The largest single drop was 22.08%. There were 3 material rating-factor edits and 4 suspicious field changes, indicating inconsistent input. The suspicious step ratio is 0.67, suggesting a high likelihood of suspicious activity. 
+
+**Recommended Action:** Request additional validation to ensure accurate and consistent information is provided.",1,1,1,
+723,v3_structured,"REASONS:
+- The customer's risk score is relatively high at 0.716.
+- The customer made 4 suspicious field edits across 4 quotes.
+- The largest single drop in premium percentage was 22.08%.
+
+ACTION: Request additional validation.",1,1,1,
+76,v1_basic,"Referral Explanation:
+
+This quote journey was flagged due to the customer's suspicious behavior of consistently lowering their premium through material edits, specifically reducing their annual mileage in four out of five quotes, resulting in a significant drop in premium (25.24% overall and 20.87% in the largest single drop). Additionally, the customer made a significant edit to their previous accidents, reducing it from 2 to 1 in the final quote, which is a suspicious premium-lowering field. The customer's risk score is also relatively high (0.715), indicating a potentially higher risk profile. These behavioral patterns warrant further validation to ensure the customer's information is accurate and not manipulated for the purpose of obtaining a lower premium.",0,1,0,"manipulate, manipulated"
+76,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 76 requires review due to repeated quote attempts (5 quotes), significant premium reduction (25.24% drop from first to lowest quote), and material rating-factor edits (2 material edits). The customer also made suspicious field changes (4 suspicious field edits) and experienced a large single premium drop (20.87%). The quote sequence shows inconsistent changes in annual mileage and previous accidents, which may indicate a need for additional validation. **Recommended action: Request additional validation.**",1,1,1,
+76,v3_structured,"REASONS:
+- The customer made 4 suspicious field edits across the quote journey.
+- The customer's annual mileage decreased by 2.1% in each consecutive quote, with 3 instances of mileage decrease.
+- The customer's premium dropped by 25.24% from the first quote to the lowest premium quote.
+
+ACTION: Request additional validation",1,1,1,
+427,v1_basic,"Referral Explanation:
+
+This quote journey was flagged due to the customer's suspicious pattern of quote manipulation. The customer made a total of 4 suspicious field edits (material_edit_count: 3, suspicious_field_edit_count: 4) and 2 consistency violations (consistency_violation_count: 2) throughout the 6 quotes. 
+
+Notably, the customer's driver age was edited in 3 out of the 6 quotes, resulting in a significant drop in premium (largest_single_drop_pct: 11.96). Additionally, the customer's annual mileage was decreased in 3 out of the 6 quotes, with a total decrease of 2.8 units (mileage_decrease_count: 2). 
+
+The suspicious step ratio (suspicious_step_ratio: 0.8) indicates that the customer's quote sequence is not following a typical pattern, suggesting that the customer is actively trying to manipulate the quotes to achieve a lower premium. 
+
+Given these behavioral indicators, it is recommended to request additional validation to ensure that the customer's quotes accurately reflect their risk profile.",0,1,0,actively trying to manipulate
+427,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 427 warrants review due to repeated quote attempts (6 quotes) and significant premium reductions (17.13% average drop and 11.96% largest single drop). The customer made material rating-factor edits (3 times) and suspicious field changes (4 times), with a suspicious step ratio of 0.8. Additionally, there were consistency issues (2 violations) and changes to driver experience, previous accidents, and annual mileage. The recommended action is to request additional validation to ensure accurate risk assessment.",1,1,1,
+427,v3_structured,"REASONS:
+- The customer made 4 suspicious field edits, which may warrant review.
+- The quote sequence shows a high suspicious step ratio of 0.8.
+- The customer's risk score is 0.712, which is relatively low.
+
+ACTION: Request additional validation.",1,0,1,0.712 called relatively low
+492,v1_basic,"Referral Explanation:
+
+This quote journey was flagged due to the customer's suspicious behavior in attempting to lower their premium significantly. The customer received 5 quotes, with the largest single drop in premium being 27.04%. This suggests that the customer is actively trying to find the lowest possible premium.
+
+The customer made material edits to their quote, changing fields such as annual mileage, previous accidents, and driver age. However, the suspicious premium lowering fields, which include annual mileage and previous accidents, were changed in a way that would likely lower the premium. This indicates that the customer is intentionally manipulating these fields to achieve a lower premium.
+
+Additionally, the customer's quote sequence shows a pattern of decreasing annual mileage and previous accidents, which are both factors that would typically lower the premium. However, the customer's driver experience increased from 24 to 25, which is an unusual combination of changes that may indicate an attempt to manipulate the premium.
+
+Overall, the customer's behavior in this quote journey suggests that they are trying to take advantage of the system to achieve a lower premium, which warrants further investigation and validation.",0,1,0,"intionally, attempt to manipulate"
+492,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 492 may require review due to repeated quote attempts (5 quotes) and significant premium reductions (27.04% drop from first to lowest premium). There were material rating-factor edits (3) and suspicious field changes (4) observed, with a suspicious step ratio of 0.5. The customer's annual mileage decreased twice and previous accidents decreased once, while driver experience increased once. The recommended action is to request additional validation to ensure the customer's information is accurate and consistent.",1,1,1,
+492,v3_structured,"REASONS:
+- The customer made 4 suspicious field edits across 5 quotes.
+- The customer's annual mileage was decreased in 2 quotes, and previous accidents were decreased in 1 quote.
+- The largest single premium drop percentage was 27.04%.
+
+ACTION: Request additional validation.",1,1,1,
+141,v1_basic,"Referral Explanation:
+
+This quote journey was flagged due to the customer's suspicious behavior of consistently lowering their premium through material edits, particularly in the annual mileage field, across multiple quotes (4 out of 5 quotes). The customer's annual mileage decreased by 4.0 units, which is a significant reduction. Additionally, the customer's previous accidents decreased by 1, and their driver experience remained unchanged. The customer's risk score is 0.692, which is above the average risk score. The recommended action is to request additional validation to ensure the customer's information is accurate and to verify the legitimacy of their quote journey.",1,1,0,
+141,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 141 warrants review due to repeated quote attempts (5 quotes), significant premium reduction (24.13% drop from first to lowest quote), and material rating-factor edits (3 edits). The customer also made suspicious field changes (5 edits) and experienced a large mileage decrease (4 times). The recommended action is to request additional validation to ensure accurate and consistent quote assessments.",1,1,1,
+141,v3_structured,"REASONS:
+- The customer made 5 quotes with a significant first-to-lowest premium drop of 24.13%.
+- The customer made material edits (3) and suspicious field edits (5) during the quote journey.
+- The customer's suspicious step ratio is 1.0, indicating consistent suspicious behavior.
+
+ACTION: Request additional validation.",1,1,1,
+159,v1_basic,"Referral Explanation:
+
+This quote journey was flagged due to the customer's suspicious pattern of quote modifications. The customer made a total of 7 edits to suspicious fields, which is a significant number considering the total number of quotes (5). The suspicious fields edited include annual mileage, previous accidents, and driver experience, all of which are factors that can significantly impact the premium.
+
+Additionally, the customer's quotes show a consistent pattern of lowering the annual mileage, which resulted in a significant drop in premium (up to 15.93%). This pattern of behavior is unusual and warrants further investigation to ensure that the customer is not manipulating the quote process to obtain a lower premium.
+
+The recommended action is to request additional validation to confirm the customer's information and ensure that the quote process is being conducted fairly and transparently.",0,1,0,manipulating
+159,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 159 may require review due to repeated quote attempts (n_quotes = 5) and significant premium reductions (first_to_lowest_premium_drop_pct = 15.93%). The customer made material edits (material_edit_count = 5) and suspicious field changes (suspicious_field_edit_count = 7) across the quote sequence. The suspicious_step_ratio of 1.0 indicates consistent premium lowering. The recommended action is to request additional validation.",1,1,1,
+159,v3_structured,"REASONS:
+- The customer made 7 edits to suspicious fields across the quote journey.
+- The customer made 4 consecutive decreases in annual mileage.
+- The largest single premium drop percentage was 11.61%.
+
+ACTION: Request additional validation",1,1,1,
+59,v1_basic,"Referral Explanation:
+
+This quote journey has been flagged due to the customer's suspicious pattern of quote manipulation. The customer has made a total of 5 material edits and 5 suspicious field edits across 4 quotes, resulting in a suspicious step ratio of 0.67. 
+
+Notably, the customer has made significant changes to their driver experience, with a 1-year increase in experience across consecutive quotes (14 to 15 years). This is a strong behavioral indicator of quote manipulation, as it is unlikely for a driver's experience to increase by a year in a short period of time.
+
+Additionally, the customer has also made changes to their annual mileage, which has decreased by 2.8% and 3.8% in consecutive quotes. While these changes are not as significant as the driver experience changes, they still contribute to the overall suspicious pattern of quote manipulation.
+
+The customer's risk score is 0.667, which is above the average risk score, indicating that they are a higher-risk customer. The recommended action is to request additional validation to ensure that the customer's quote journey is legitimate and not manipulated for the purpose of obtaining a lower premium.",0,1,0,"manipulate, manipulated"
+59,v2_grounded_concise,"**Case Review Explanation:**
+
+This motor insurance quote journey for customer ID 59 warrants review due to repeated quote attempts (4 quotes) and significant premium reductions (first quote to lowest premium drop of 28.27%). The customer has made material rating-factor edits (4 edits) and suspicious field changes (5 edits), with a suspicious step ratio of 0.67. Additionally, there are consistency issues with the customer's driver experience and previous accidents. The recommended action is to request additional validation.",1,1,1,
+59,v3_structured,"REASONS:
+- The customer has a high risk score of 0.667.
+- There were 5 suspicious field edits out of 4 material edits.
+- The suspicious step ratio is 0.67, indicating potential inconsistencies.
+
+ACTION: Request additional validation",1,0,1,"5 suspicious edits stated out of 4 material edits - impossible"
+711,v1_basic,"Referral Explanation:
+
+This quote journey was flagged due to the customer's suspicious quote sequence behavior. The customer made 4 edits to fields that are commonly used to lower premiums (suspicious_field_edit_count = 4), which is a significant proportion of the total number of edits made (suspicious_step_ratio = 0.6). Additionally, the customer's annual mileage was decreased in 3 consecutive quotes, which is a common tactic used to lower premiums (mileage_decrease_count = 3). These behavioral patterns suggest that the customer may be attempting to manipulate the quote system to obtain a lower premium, warranting further validation.",0,1,0,"manipulate, attempting to manipulate"
+711,v2_grounded_concise,"**Case Review Explanation**
+
+This motor insurance quote journey for customer 711 warrants review due to repeated quote attempts (6 quotes) and significant premium reductions (17.8% average drop and 16.6% largest single drop). The customer made material rating-factor edits (2 edits) and suspicious field changes (4 edits), with a suspicious step ratio of 0.6. The customer also decreased mileage in 3 out of 6 quotes, which may indicate an attempt to lower premiums. 
+
+**Recommended Action:** Request additional validation to ensure accurate risk assessment and premium calculation.",1,1,1,
+711,v3_structured,"REASONS:
+- The customer has a high risk score (0.631) indicating a higher likelihood of claims.
+- The customer made 4 suspicious field edits, which may warrant review.
+- The customer's annual mileage decreased in 3 consecutive quotes, which may indicate a potential misrepresentation.
+
+ACTION: Request additional validation",1,1,1,

@@ -1,0 +1,16 @@
+{
+  "promoted_version": "v3_structured",
+  "promoted_at": "2026-06-12T19:38:51.115039",
+  "thresholds": {
+    "groundedness_mean": 1.0,
+    "factual_correctness_mean": 0.9,
+    "conciseness_mean": 0.85
+  },
+  "metrics": {
+    "groundedness_mean": 1.0,
+    "factual_correctness_mean": 1.0,
+    "conciseness_mean": 1.0,
+    "overall_rubric_score_mean": 1.0,
+    "promotable": true
+  }
+}
