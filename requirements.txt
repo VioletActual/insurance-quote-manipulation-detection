@@ -3,3 +3,4 @@ numpy
 matplotlib
 scikit-learn
 jupyter
+pydantic>=2,<3

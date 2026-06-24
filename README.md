@@ -21,6 +21,7 @@ If you only read one section, read **V3** below. That is the newest work.
 | LLM product sense | versioned prompts, grounded explanations, quality gates |
 | MLOps (light) | MLflow tracking, prompt promotion, reproducibility |
 | Software engineering | `src/` modules, tests, CI, deterministic fallback |
+| Typed data contracts | pydantic schemas validating the evidence fed to the model and the structured output it returns |
 | Communication | plain-English problem framing and honest limitations |
 
 ---
@@ -31,11 +32,11 @@ If you only read one section, read **V3** below. That is the newest work.
 |------|--------------|-----------------|
 | **V3** (`QuoteManipulationV3.ipynb`) | Language-model triage layer that explains flagged cases, with evaluation and tracking | Winning prompt selected by an automated quality gate |
 | **V2** (`QuoteManipulationV2.ipynb`) | The detection model that finds suspicious quote journeys | Random Forest, F1 0.709, PR-AUC 0.811 |
-| **CI** (`.github/workflows/ci.yml`) | Runs the test suite automatically on every push | 24 tests passing |
+| **CI** (`.github/workflows/ci.yml`) | Runs the test suite automatically on every push | 30 tests passing |
 
 Repository layout:
 
-    src/qm/      reusable, tested code (scoring functions and prompt library)
+    src/qm/      reusable, tested code (scoring functions, prompt library, schemas)
     tests/       automated tests for that code
     .github/     the GitHub Actions setup that runs the tests
     *.ipynb      the full notebooks (V2 detection, V3 triage)
@@ -61,7 +62,7 @@ The detection model in V2 can flag a case. But a flag on its own is not useful t
 How it works, and why each step matters:
 
 **1. Turn a flagged case into evidence.**
-Each flagged journey is converted into a clean set of facts (number of quotes, premium drop, what was edited, and so on). The language model only ever sees these facts, never the answer, so it cannot make things up beyond the evidence.
+Each flagged journey is converted into a clean set of facts (number of quotes, premium drop, what was edited, and so on). The language model only ever sees these facts, never the answer, so it cannot make things up beyond the evidence. These facts are validated against a typed pydantic schema before they reach the model, so a malformed case is caught early rather than quietly producing a bad explanation.
 
 **2. Ask the model to explain, using versioned prompts.**
 The instructions given to the model are saved as numbered versions with notes on what changed, the same way code is versioned. Three versions were compared, from a loose first attempt to a strict one that forces a fixed "reasons and recommended action" format.
@@ -129,7 +130,7 @@ Beyond headline metrics, the notebook reviews where the model goes wrong, which 
 
 ## CI: automated testing
 
-Every time code is pushed to GitHub, a fresh environment is set up automatically and the test suite runs: 24 tests covering the scoring functions and the prompt library. The green badge at the top of this page shows the current status.
+Every time code is pushed to GitHub, a fresh environment is set up automatically and the test suite runs: 30 tests covering the scoring functions, the prompt library, and the pydantic schemas that validate model input and output. The green badge at the top of this page shows the current status.
 
 The tests are built to run without calling any paid model, using a built-in deterministic fallback. That keeps the automated checks free, fast, and reliable, and means they never depend on an external key.
 
@@ -156,3 +157,9 @@ V3 uses a free language model (Llama 3.1 via Groq) for live explanation generati
 The quote journeys are simulated, not real insurer data. The pricing formula is simplified, and the data leaves out factors like postcode, occupation, and no-claims discount. This is a realistic prototype that demonstrates the full workflow, not a production system.
 
 A natural next step on the evaluation side would be to classify the language model's factual errors into categories (numeric mismatch, unsupported claim, wrong risk interpretation, missing evidence) rather than a single pass/fail, which would make the automatic checks more informative.
+
+---
+
+## Changelog
+
+**v3.1** — Added pydantic schema validation at both model boundaries: `CaseEvidence` validates the structured facts passed to the model, and `StructuredExplanation` parses and validates the v3 REASONS/ACTION output. The format-compliance check now uses schema validation rather than string matching. Six schema tests added (24 to 30), covered by CI.
