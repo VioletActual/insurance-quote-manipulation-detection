@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/VioletActual/insurance-quote-manipulation-detection/actions/workflows/ci.yml/badge.svg)
 
-**Live demo:** _<!-- add the hosted URL here once deployed -->_ · **API docs:** the live URL's `/docs`
+**Live demo:** _(https://quote-integrity-console.onrender.com)_ · **API docs:** the live URL's `/docs`
 
 **In one line:** an end-to-end system that detects suspicious quote-manipulation behaviour in motor insurance, then writes analyst-ready explanations for each flagged case, served as a FastAPI app with an interactive console, with automated quality gates, experiment tracking, and CI.
 
