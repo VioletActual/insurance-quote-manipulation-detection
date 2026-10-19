@@ -1,14 +1,19 @@
 """FastAPI service for the quote-manipulation triage layer.
 
-Serves the V3 triage layer over HTTP, key-free and deterministic:
+Serves detection, explanation, and evaluation over HTTP:
 
-  GET  /health    liveness check
-  POST /explain   CaseEvidence in -> grounded explanation + self-evaluation scores
-  POST /evaluate  explanation + CaseEvidence in -> the four rubric scores + gate verdict
+  GET  /health      liveness check
+  GET  /model-info  which model backs /score, and how it was selected
+  POST /score       a raw quote journey in -> risk score, flag, action, and CaseEvidence
+  POST /explain     CaseEvidence in -> grounded explanation + self-evaluation scores
+  POST /evaluate    explanation + CaseEvidence in -> the four rubric scores + gate verdict
 
-The same pydantic contracts, generator, and scorers the notebook and CI use are
-reused here, so the API cannot drift from the evaluated behaviour. No external
-model is called; the deterministic generator backs /explain.
+The same pydantic contracts, feature code, generator, and scorers the notebook and
+CI use are reused here, so the API cannot drift from the trained/evaluated behaviour.
+/score runs the trained model; /explain uses the deterministic generator (no API key).
+
+The two combine into the full pipeline: POST a journey to /score, take the
+`case_evidence` it returns, and POST that to /explain for an analyst-ready write-up.
 
 Run locally:
     PYTHONPATH=. uvicorn src.qm.api.main:app --reload
@@ -18,6 +23,7 @@ Interactive docs:
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from typing import List, Optional
 
 from fastapi import FastAPI
@@ -25,6 +31,8 @@ from pydantic import BaseModel, Field
 
 from src.qm.schema import CaseEvidence
 from src.qm.generation import generate_explanation
+from src.qm.features import journey_to_features
+from src.qm.scoring import score_feature_vector, MODEL_INFO
 from src.qm.evaluation import (
     score_groundedness,
     score_factual_correctness,
@@ -47,8 +55,55 @@ app = FastAPI(
         "Deterministic and key-free: reuses the project's pydantic contracts, "
         "generator, and evaluation rubric."
     ),
-    version="1.0.0",
+    version="1.1.0",
 )
+
+
+# ------------------------------ score models -------------------------------
+
+class QuoteStep(BaseModel):
+    """One quote attempt in a journey: the rating factors the customer entered,
+    the premium the pricing engine returned, and when it happened."""
+    driver_age: int = Field(ge=16, le=100)
+    driver_experience: int = Field(ge=0, le=80)
+    previous_accidents: int = Field(ge=0)
+    annual_mileage: float = Field(ge=0, description="Annual mileage in x1000 km")
+    car_age: int = Field(ge=0)
+    premium: float = Field(gt=0, description="Quoted premium returned for this attempt")
+    quote_time: datetime = Field(description="ISO 8601 timestamp of the quote, e.g. 2026-03-01T09:00:00")
+
+
+class ScoreRequest(BaseModel):
+    quotes: List[QuoteStep] = Field(min_length=1, description="The quote journey, in order")
+    customer_id: int = Field(default=0, description="Optional identifier, echoed back")
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "customer_id": 662,
+                "quotes": [
+                    {"driver_age": 24, "driver_experience": 2, "previous_accidents": 2,
+                     "annual_mileage": 18.0, "car_age": 5, "premium": 1300.0,
+                     "quote_time": "2026-03-01T09:00:00"},
+                    {"driver_age": 24, "driver_experience": 3, "previous_accidents": 1,
+                     "annual_mileage": 14.0, "car_age": 5, "premium": 1100.0,
+                     "quote_time": "2026-03-01T09:12:00"},
+                    {"driver_age": 25, "driver_experience": 4, "previous_accidents": 0,
+                     "annual_mileage": 8.0, "car_age": 5, "premium": 720.0,
+                     "quote_time": "2026-03-01T09:21:00"},
+                ],
+            }
+        }
+    }
+
+
+class ScoreResponse(BaseModel):
+    customer_id: int
+    risk_score: float = Field(description="Model probability the journey is suspicious (0-1)")
+    flag: bool = Field(description="True if risk_score clears the flag threshold")
+    recommended_action: str
+    model_name: str
+    case_evidence: CaseEvidence = Field(description="Ready to POST straight to /explain")
 
 
 # ----------------------------- response models -----------------------------
@@ -91,6 +146,43 @@ class EvaluateResponse(BaseModel):
 def health():
     """Liveness check for monitoring and deploy health probes."""
     return {"status": "ok"}
+
+
+@app.get("/model-info")
+def model_info():
+    """Which model backs /score, how it was selected, and its flag threshold."""
+    return MODEL_INFO
+
+
+@app.post("/score", response_model=ScoreResponse)
+def score(req: ScoreRequest):
+    """Score a raw quote journey end to end.
+
+    Reconstructs the per-step edits from the submitted quotes, builds the same 31
+    journey features the model was trained on, runs the model, and returns the risk
+    score, flag, recommended action, and a CaseEvidence payload that can be sent
+    straight to /explain. The request is validated at the boundary, so a malformed
+    journey is rejected with a 422 rather than scored on bad input.
+    """
+    quotes = [q.model_dump() for q in req.quotes]
+    built = journey_to_features(quotes, customer_id=req.customer_id)
+    scored = score_feature_vector(built["feature_vector"])
+
+    evidence = CaseEvidence(
+        customer_id=req.customer_id,
+        risk_score=scored["risk_score"],
+        recommended_action=scored["recommended_action"],
+        quote_sequence=built["quote_sequence"],
+        **built["evidence_fields"],
+    )
+    return ScoreResponse(
+        customer_id=req.customer_id,
+        risk_score=scored["risk_score"],
+        flag=scored["flag"],
+        recommended_action=scored["recommended_action"],
+        model_name=MODEL_INFO["model_name"],
+        case_evidence=evidence,
+    )
 
 
 @app.post("/explain", response_model=ExplainResponse)

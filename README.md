@@ -30,16 +30,19 @@ If you only read one section, read **V3** below. That is the newest work.
 
 | Part | What it does | Headline result |
 |------|--------------|-----------------|
+| **API** (`src/qm/api/`) | FastAPI service: scores a raw quote journey, explains a flagged case, and quality-scores explanations | 5 endpoints, interactive `/docs`, key-free |
 | **V3** (`QuoteManipulationV3.ipynb`) | Language-model triage layer that explains flagged cases, with evaluation and tracking | Winning prompt selected by an automated quality gate |
 | **V2** (`QuoteManipulationV2.ipynb`) | The detection model that finds suspicious quote journeys | Random Forest, F1 0.709, PR-AUC 0.811 |
-| **CI** (`.github/workflows/ci.yml`) | Runs the test suite automatically on every push | 30 tests passing |
+| **CI** (`.github/workflows/ci.yml`) | Runs the test suite automatically on every push | 66 tests passing |
 
 Repository layout:
 
-    src/qm/      reusable, tested code (scoring functions, prompt library, schemas)
-    tests/       automated tests for that code
-    .github/     the GitHub Actions setup that runs the tests
-    *.ipynb      the full notebooks (V2 detection, V3 triage)
+    src/qm/          reusable, tested code (features, scoring, generator, schemas, prompts)
+    src/qm/api/      the FastAPI service
+    src/qm/models/   the trained model artifact (quote_risk_model.joblib)
+    tests/           automated tests for that code
+    .github/         the GitHub Actions setup that runs the tests
+    *.ipynb          the full notebooks (V2 detection, V3 triage)
 
 ---
 
@@ -130,9 +133,27 @@ Beyond headline metrics, the notebook reviews where the model goes wrong, which 
 
 ## CI: automated testing
 
-Every time code is pushed to GitHub, a fresh environment is set up automatically and the test suite runs: 30 tests covering the scoring functions, the prompt library, and the pydantic schemas that validate model input and output. The green badge at the top of this page shows the current status.
+Every time code is pushed to GitHub, a fresh environment is set up automatically and the test suite runs: 66 tests covering the feature engineering, the model scoring, the FastAPI endpoints, the scoring functions, the prompt library, and the pydantic schemas that validate model input and output. The green badge at the top of this page shows the current status.
 
 The tests are built to run without calling any paid model, using a built-in deterministic fallback. That keeps the automated checks free, fast, and reliable, and means they never depend on an external key.
+
+---
+
+## API: serving the model and explanations
+
+The whole pipeline is served over HTTP by a small FastAPI app that reuses the exact feature code, model, generator, and rubric the notebooks and CI use, so the service cannot drift from the evaluated behaviour. It is deterministic and needs no API key.
+
+| Endpoint | What it does |
+|----------|--------------|
+| `GET /health` | Liveness check |
+| `GET /model-info` | Which model backs scoring (Random Forest, selected by PR-AUC) and its flag threshold |
+| `POST /score` | A raw quote journey in: reconstructs the per-step edits, builds the 31 journey features, runs the model, and returns the risk score, flag, recommended action, and a `CaseEvidence` payload |
+| `POST /explain` | A `CaseEvidence` in: returns a grounded, analyst-ready explanation with its own quality scores |
+| `POST /evaluate` | An explanation plus its evidence in: returns the four rubric scores and whether it clears the promotion gate |
+
+`/score` and `/explain` chain into the full workflow: post a journey to `/score`, take the `case_evidence` it returns, and post that to `/explain` for the written triage note. The input to `/score` is validated at the boundary, so a malformed journey is rejected with a `422` rather than scored on bad data.
+
+The detection model is loaded from `src/qm/models/quote_risk_model.joblib`. It is the Random Forest, selected by PR-AUC (the primary metric for this imbalanced problem), reproducible from the notebook with the fixed seed.
 
 ---
 
@@ -150,6 +171,13 @@ V3 uses a free open-weights model (GPT-OSS 20B via Groq) for live explanation ge
 
     PYTHONPATH=. pytest tests/ -v
 
+**API (from the project root):**
+
+    pip install -r requirements.txt
+    PYTHONPATH=. uvicorn src.qm.api.main:app --reload
+
+Then open `http://127.0.0.1:8000/docs` for the interactive endpoint explorer.
+
 ---
 
 ## Honest limitations and next steps
@@ -161,5 +189,7 @@ A natural next step on the evaluation side would be to classify the language mod
 ---
 
 ## Changelog
+
+**v4.0** — Served the detection + explanation pipeline as a FastAPI app (`/score`, `/explain`, `/evaluate`, `/health`, `/model-info`). The trained model is saved as a reproducible joblib artifact and loaded by `/score`; a raw quote journey is turned into the 31 model features by code lifted from the notebook, so the served features match training exactly. Fixed the notebook's model selection to use PR-AUC (its stated primary metric) rather than F1, so it consistently selects the Random Forest the README describes. 21 tests added (features, scoring, the `/score` endpoint, and the `/score` to `/explain` chain), all covered by CI.
 
 **v3.1** — Added pydantic schema validation at both model boundaries: `CaseEvidence` validates the structured facts passed to the model, and `StructuredExplanation` parses and validates the v3 REASONS/ACTION output. The format-compliance check now uses schema validation rather than string matching. Six schema tests added (24 to 30), covered by CI.
