@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quote Integrity Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: an internal triage console. KPI strip, a live referral queue, and a journey scorer. */
+:root{
+  --bg:#f3f5f8; --panel:#ffffff; --panel-2:#eef1f6; --ink:#141820; --muted:#5d6775;
+  --line:#e0e5ec; --accent:#2a45c4; --accent-soft:#e7ecfb;
+  --low:#1d824a; --low-soft:#e2f2e8; --med:#b2740c; --med-soft:#f7ecd3; --high:#c93c29; --high-soft:#fbe5e0;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace; --sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1014; --panel:#151a21; --panel-2:#1d232c; --ink:#e8edf4; --muted:#95a1b1;
+  --line:#242b35; --accent:#8098ff; --accent-soft:#1a2342;
+  --low:#48c178; --low-soft:#12271b; --med:#e0a24c; --med-soft:#2b2311; --high:#ef6c54; --high-soft:#2d1712; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0d1014; --panel:#151a21; --panel-2:#1d232c; --ink:#e8edf4; --muted:#95a1b1;
+  --line:#242b35; --accent:#8098ff; --accent-soft:#1a2342;
+  --low:#48c178; --low-soft:#12271b; --med:#e0a24c; --med-soft:#2b2311; --high:#ef6c54; --high-soft:#2d1712; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:14.5px; line-height:1.5; -webkit-font-smoothing:antialiased;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:0}
+.wrap{max-width:960px; margin:0 auto; padding-block:clamp(16px,3.5vw,30px)}
+h1,h2,h3{margin:0; text-wrap:balance}
+.num{font-family:var(--mono); font-variant-numeric:tabular-nums}
+a{color:var(--accent)} button{font-family:inherit; cursor:pointer}
+
+/* top bar */
+.topbar{display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding-bottom:16px; border-bottom:1px solid var(--line)}
+.logo{display:flex; align-items:center; gap:9px; font-family:var(--mono); font-weight:600; font-size:15px; letter-spacing:.01em}
+.logo .mark{width:22px; height:22px; border-radius:6px; background:var(--accent); display:grid; place-items:center; color:#fff; font-weight:700; font-size:13px}
+.demo-chip{font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:3px 8px}
+.topbar .spacer{flex:1}
+.topbar a{font-size:13px; text-decoration:none}
+.tagline{color:var(--muted); font-size:13.5px; margin:14px 0 0; max-width:70ch}
+
+/* kpi */
+.kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:20px}
+@media (max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 15px; min-width:0}
+.kpi .k{font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.kpi .v{font-family:var(--mono); font-weight:600; font-size:26px; margin-top:6px; line-height:1}
+.kpi .v small{font-size:13px; color:var(--muted)}
+
+/* section */
+.sec{margin-top:26px}
+.sec-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:12px}
+.sec-head h2{font-size:16px; font-weight:600}
+.sec-head .note{font-size:12.5px; color:var(--muted)}
+.panel{background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden}
+
+/* queue */
+.q-row{display:grid; grid-template-columns:40px 1fr 150px 180px; gap:12px; align-items:center; padding:12px 16px; width:100%; text-align:left; background:none; border:none; color:var(--ink); border-top:1px solid var(--line)}
+.q-row:first-child{border-top:none}
+.q-row:hover{background:var(--panel-2)}
+.q-head{display:grid; grid-template-columns:40px 1fr 150px 180px; gap:12px; padding:10px 16px; font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--line); background:var(--panel-2)}
+.q-rank{font-family:var(--mono); color:var(--muted)}
+.q-cust{min-width:0}
+.q-cust .id{font-family:var(--mono); font-weight:600}
+.q-cust .sig{font-size:12.5px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.q-risk{display:flex; align-items:center; gap:9px}
+.mini{flex:1; height:7px; border-radius:999px; background:var(--panel-2); overflow:hidden; min-width:44px}
+.mini i{display:block; height:100%; border-radius:999px}
+.q-risk .p{font-family:var(--mono); font-weight:600; font-size:13px; width:38px; text-align:right}
+@media (max-width:640px){
+  .q-head{display:none}
+  .q-row{grid-template-columns:30px 1fr auto; row-gap:6px}
+  .q-row .q-action{grid-column:2 / -1}
+}
+.q-detail{padding:4px 16px 18px; border-top:1px solid var(--line); background:var(--panel-2)}
+
+/* pills / badges */
+.pill{display:inline-flex; align-items:center; gap:6px; font-weight:600; font-size:12px; padding:5px 11px; border-radius:999px; white-space:nowrap}
+.pill .d{width:7px;height:7px;border-radius:50%}
+.b-low{background:var(--low-soft); color:var(--low)} .b-low .d{background:var(--low)} .f-low i{background:var(--low)}
+.b-med{background:var(--med-soft); color:var(--med)} .b-med .d{background:var(--med)} .f-med i{background:var(--med)}
+.b-high{background:var(--high-soft); color:var(--high)} .b-high .d{background:var(--high)} .f-high i{background:var(--high)}
+
+/* verdict component (shared) */
+.verdict{padding:16px}
+.v-top{display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap}
+.v-score{display:flex; align-items:baseline; gap:8px}
+.v-score .s{font-family:var(--mono); font-weight:600; font-size:38px; line-height:1}
+.v-score small{color:var(--muted); font-size:14px}
+.v-cap{font-size:12px; color:var(--muted); margin-top:3px}
+.meter{position:relative; height:10px; border-radius:999px; margin:16px 0 6px; overflow:visible;
+  background:linear-gradient(90deg,var(--low) 0 30%,var(--med) 45% 60%,var(--high) 80% 100%); opacity:.92}
+.meter .mk{position:absolute; top:-4px; width:4px; height:18px; border-radius:2px; background:var(--ink); box-shadow:0 0 0 2px var(--panel); transition:left .55s cubic-bezier(.2,.7,.2,1)}
+.meter .ft{position:absolute; top:-3px; left:50%; width:1px; height:16px; background:var(--muted); opacity:.55}
+.scale{display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; color:var(--muted)}
+.v-action{display:flex; gap:9px; align-items:center; margin-top:14px; padding-top:13px; border-top:1px solid var(--line); font-size:14px}
+.v-action .lbl{font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted)}
+.chips{display:flex; flex-wrap:wrap; gap:7px; margin-top:13px}
+.chip{display:inline-flex; align-items:center; gap:6px; background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:6px 10px; font-size:12.5px}
+.chip.warn{background:var(--high-soft); border-color:transparent; color:var(--high)}
+.chip .n{font-family:var(--mono); font-weight:600}
+.why{margin-top:14px; padding-top:13px; border-top:1px solid var(--line)}
+.why h4{font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:500; margin:0 0 7px}
+.why p{margin:0; font-size:14px; line-height:1.6}
+
+/* journey mini table */
+.jtbl{width:100%; border-collapse:collapse; font-size:13px; margin-top:4px}
+.jtbl th,.jtbl td{padding:7px 10px; text-align:right; white-space:nowrap}
+.jtbl th:first-child,.jtbl td:first-child{text-align:left}
+.jtbl thead th{font-family:var(--mono); font-weight:500; font-size:10px; letter-spacing:.03em; text-transform:uppercase; color:var(--muted)}
+.jtbl tbody tr+tr td{border-top:1px solid var(--line)}
+.jtbl td.down{color:var(--high); font-weight:600}
+.jwrap{overflow-x:auto}
+
+/* scorer */
+.scorer{padding:16px}
+.editor{width:100%; border-collapse:collapse; font-size:13.5px}
+.editor th{font-family:var(--mono); font-weight:500; font-size:10px; letter-spacing:.03em; text-transform:uppercase; color:var(--muted); padding:4px 6px; text-align:center}
+.editor td{padding:4px 5px}
+.editor input{width:100%; min-width:58px; font-family:var(--mono); font-size:13px; text-align:center; padding:7px 6px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink)}
+.editor input:focus{outline:2px solid var(--accent); outline-offset:-1px; border-color:transparent}
+.editor .rm{border:none; background:none; color:var(--muted); font-size:16px; line-height:1; padding:4px 6px}
+.editor .rm:hover{color:var(--high)}
+.scorer-controls{display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin-top:14px}
+.presets{display:flex; gap:7px; flex-wrap:wrap}
+.preset{font-size:12.5px; border:1px solid var(--line); background:var(--panel-2); color:var(--ink); border-radius:8px; padding:6px 11px}
+.preset:hover{border-color:var(--accent)}
+.ghost{font-size:13px; border:1px dashed var(--line); background:none; color:var(--muted); border-radius:8px; padding:7px 12px}
+.spacer{flex:1}
+.btn{background:var(--accent); color:#fff; border:none; border-radius:9px; padding:10px 18px; font-weight:600; font-size:14px}
+.btn:active{transform:translateY(1px)}
+.hint{font-size:12.5px; color:var(--muted); margin-top:11px; font-family:var(--mono)}
+.result{margin-top:16px; border-top:1px solid var(--line)}
+
+.foot{margin-top:30px; padding-top:16px; border-top:1px solid var(--line); font-size:12.5px; color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="topbar">
+    <div class="logo"><span class="mark">Q</span> Quote Integrity Console</div>
+    <span class="demo-chip">Demo</span>
+    <span class="spacer"></span>
+    <a href="/docs">API</a>
+    <a href="https://github.com/VioletActual/insurance-quote-manipulation-detection" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <p class="tagline">Reviews motor-insurance quote journeys for signs a customer is editing their answers to drive the price down. Flagged cases land in the referral queue with a risk score and a plain-English reason; analysts can also score any journey on demand.</p>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="sec">
+    <div class="sec-head"><h2>Referral queue</h2><span class="note">flagged journeys, highest risk first · click a row for detail</span></div>
+    <div class="panel">
+      <div class="q-head"><span>#</span><span>Customer &amp; signals</span><span>Risk</span><span>Recommended action</span></div>
+      <div id="queue"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-head"><h2>Score a journey</h2><span class="note">edit the attempts or load an example, then score</span></div>
+    <div class="panel scorer">
+      <div class="jwrap">
+        <table class="editor">
+          <thead><tr><th>#</th><th>Age</th><th>Experience</th><th>Accidents</th><th>Mileage (k)</th><th>Premium (£)</th><th></th></tr></thead>
+          <tbody id="editorBody"></tbody>
+        </table>
+      </div>
+      <div class="scorer-controls">
+        <button class="ghost" id="addRow">+ Add attempt</button>
+        <div class="presets">
+          <button class="preset" data-load="honest">Honest shopper</button>
+          <button class="preset" data-load="nudger">Borderline</button>
+          <button class="preset" data-load="manipulator">Manipulator</button>
+        </div>
+        <span class="spacer"></span>
+        <button class="btn" id="scoreBtn">Score journey</button>
+      </div>
+      <div class="hint" id="scoreHint"></div>
+      <div class="result" id="scoreResult" hidden></div>
+    </div>
+  </div>
+
+  <div class="foot">Random Forest (selected on PR-AUC) over 31 behavioural features, with a grounded, no-accusations text layer for the reason. Every figure shown is taken from the journey itself. This is a demonstration on simulated data.</div>
+</main>
+
+<script>
+const PRESETS = {"honest": {"quotes": [{"driver_age": 35, "driver_experience": 15, "previous_accidents": 0, "annual_mileage": 10.0, "car_age": 5, "premium": 620, "quote_time": "2026-03-01T10:00:00"}, {"driver_age": 35, "driver_experience": 15, "previous_accidents": 0, "annual_mileage": 10.4, "car_age": 5, "premium": 624, "quote_time": "2026-03-01T13:00:00"}], "result": {"risk_score": 0.0, "flag": false, "recommended_action": "No action", "evidence": {"customer_id": 101, "risk_score": 0.0, "recommended_action": "No action", "n_quotes": 2, "first_to_lowest_premium_drop_pct": 0.0, "largest_single_drop_pct": 0.0, "material_edit_count": 0, "suspicious_field_edit_count": 0, "suspicious_step_ratio": 0.0, "mileage_decrease_count": 0, "accident_decrease_count": 0, "experience_increase_count": 0, "age_band_cross_count": 0, "consistency_violation_count": 0, "quote_sequence": [{"quote_number": 1, "driver_age": 35, "driver_experience": 15, "previous_accidents": 0, "annual_mileage": 10.0, "premium": 620, "changed_fields": [], "suspicious_premium_lowering_fields": []}, {"quote_number": 2, "driver_age": 35, "driver_experience": 15, "previous_accidents": 0, "annual_mileage": 10.4, "premium": 624, "changed_fields": ["annual_mileage"], "suspicious_premium_lowering_fields": []}]}, "explanation": "This journey was flagged for review because the model assigned an elevated risk score based on combined behavioural signals. The risk score is 0.0, and the recommended action is: No action. This does not prove fraud, but supports referral triage."}}, "nudger": {"quotes": [{"driver_age": 24, "driver_experience": 5, "previous_accidents": 1, "annual_mileage": 12.0, "car_age": 5, "premium": 1050, "quote_time": "2026-03-01T09:00:00"}, {"driver_age": 24, "driver_experience": 5, "previous_accidents": 1, "annual_mileage": 10.0, "car_age": 5, "premium": 980, "quote_time": "2026-03-01T09:40:00"}, {"driver_age": 25, "driver_experience": 6, "previous_accidents": 1, "annual_mileage": 9.0, "car_age": 5, "premium": 870, "quote_time": "2026-03-01T10:10:00"}], "result": {"risk_score": 0.582, "flag": true, "recommended_action": "Prompt customer to confirm details", "evidence": {"customer_id": 204, "risk_score": 0.582, "recommended_action": "Prompt customer to confirm details", "n_quotes": 3, "first_to_lowest_premium_drop_pct": 17.14, "largest_single_drop_pct": 10.48, "material_edit_count": 3, "suspicious_field_edit_count": 4, "suspicious_step_ratio": 1.0, "mileage_decrease_count": 2, "accident_decrease_count": 0, "experience_increase_count": 1, "age_band_cross_count": 1, "consistency_violation_count": 0, "quote_sequence": [{"quote_number": 1, "driver_age": 24, "driver_experience": 5, "previous_accidents": 1, "annual_mileage": 12.0, "premium": 1050, "changed_fields": [], "suspicious_premium_lowering_fields": []}, {"quote_number": 2, "driver_age": 24, "driver_experience": 5, "previous_accidents": 1, "annual_mileage": 10.0, "premium": 980, "changed_fields": ["annual_mileage"], "suspicious_premium_lowering_fields": ["annual_mileage"]}, {"quote_number": 3, "driver_age": 25, "driver_experience": 6, "previous_accidents": 1, "annual_mileage": 9.0, "premium": 870, "changed_fields": ["annual_mileage", "driver_experience", "driver_age"], "suspicious_premium_lowering_fields": ["annual_mileage", "driver_experience", "driver_age"]}]}, "explanation": "This journey was flagged for review because the premium reduced by 17.14% from first to lowest quote, 3 material rating-factor edits were observed, declared mileage decreased during the journey, declared driving experience increased during the journey. The risk score is 0.582, and the recommended action is: Prompt customer to confirm details. This does not prove fraud, but supports referral triage."}}, "manipulator": {"quotes": [{"driver_age": 24, "driver_experience": 2, "previous_accidents": 2, "annual_mileage": 18.0, "car_age": 5, "premium": 1400, "quote_time": "2026-03-01T09:00:00"}, {"driver_age": 24, "driver_experience": 3, "previous_accidents": 1, "annual_mileage": 14.0, "car_age": 5, "premium": 1150, "quote_time": "2026-03-01T09:12:00"}, {"driver_age": 25, "driver_experience": 4, "previous_accidents": 0, "annual_mileage": 10.0, "car_age": 5, "premium": 850, "quote_time": "2026-03-01T09:21:00"}, {"driver_age": 25, "driver_experience": 5, "previous_accidents": 0, "annual_mileage": 8.0, "car_age": 5, "premium": 720, "quote_time": "2026-03-01T09:28:00"}], "result": {"risk_score": 0.915, "flag": true, "recommended_action": "Escalate for manual review", "evidence": {"customer_id": 662, "risk_score": 0.915, "recommended_action": "Escalate for manual review", "n_quotes": 4, "first_to_lowest_premium_drop_pct": 48.57, "largest_single_drop_pct": 21.43, "material_edit_count": 9, "suspicious_field_edit_count": 9, "suspicious_step_ratio": 1.0, "mileage_decrease_count": 3, "accident_decrease_count": 2, "experience_increase_count": 3, "age_band_cross_count": 1, "consistency_violation_count": 0, "quote_sequence": [{"quote_number": 1, "driver_age": 24, "driver_experience": 2, "previous_accidents": 2, "annual_mileage": 18.0, "premium": 1400, "changed_fields": [], "suspicious_premium_lowering_fields": []}, {"quote_number": 2, "driver_age": 24, "driver_experience": 3, "previous_accidents": 1, "annual_mileage": 14.0, "premium": 1150, "changed_fields": ["annual_mileage", "previous_accidents", "driver_experience"], "suspicious_premium_lowering_fields": ["annual_mileage", "previous_accidents", "driver_experience"]}, {"quote_number": 3, "driver_age": 25, "driver_experience": 4, "previous_accidents": 0, "annual_mileage": 10.0, "premium": 850, "changed_fields": ["annual_mileage", "previous_accidents", "driver_experience", "driver_age"], "suspicious_premium_lowering_fields": ["annual_mileage", "previous_accidents", "driver_experience", "driver_age"]}, {"quote_number": 4, "driver_age": 25, "driver_experience": 5, "previous_accidents": 0, "annual_mileage": 8.0, "premium": 720, "changed_fields": ["annual_mileage", "driver_experience"], "suspicious_premium_lowering_fields": ["annual_mileage", "driver_experience"]}]}, "explanation": "This journey was flagged for review because 4 quote attempts were made, the premium reduced by 48.57% from first to lowest quote, 9 material rating-factor edits were observed, declared mileage decreased during the journey. The risk score is 0.915, and the recommended action is: Escalate for manual review. This does not prove fraud, but supports referral triage."}}};
+const QUEUE = [{"risk_score": 0.909, "flag": true, "recommended_action": "Escalate for manual review", "evidence": {"customer_id": 7731, "risk_score": 0.909, "recommended_action": "Escalate for manual review", "n_quotes": 4, "first_to_lowest_premium_drop_pct": 50.0, "largest_single_drop_pct": 22.54, "material_edit_count": 9, "suspicious_field_edit_count": 9, "suspicious_step_ratio": 1.0, "mileage_decrease_count": 3, "accident_decrease_count": 2, "experience_increase_count": 3, "age_band_cross_count": 1, "consistency_violation_count": 0, "quote_sequence": [{"quote_number": 1, "driver_age": 24, "driver_experience": 2, "previous_accidents": 2, "annual_mileage": 18, "premium": 1420, "changed_fields": [], "suspicious_premium_lowering_fields": []}, {"quote_number": 2, "driver_age": 24, "driver_experience": 3, "previous_accidents": 1, "annual_mileage": 14, "premium": 1160, "changed_fields": ["annual_mileage", "previous_accidents", "driver_experience"], "suspicious_premium_lowering_fields": ["annual_mileage", "previous_accidents", "driver_experience"]}, {"quote_number": 3, "driver_age": 25, "driver_experience": 4, "previous_accidents": 0, "annual_mileage": 10, "premium": 840, "changed_fields": ["annual_mileage", "previous_accidents", "driver_experience", "driver_age"], "suspicious_premium_lowering_fields": ["annual_mileage", "previous_accidents", "driver_experience", "driver_age"]}, {"quote_number": 4, "driver_age": 25, "driver_experience": 5, "previous_accidents": 0, "annual_mileage": 8, "premium": 710, "changed_fields": ["annual_mileage", "driver_experience"], "suspicious_premium_lowering_fields": ["annual_mileage", "driver_experience"]}]}, "explanation": "This journey was flagged for review because 4 quote attempts were made, the premium reduced by 50.0% from first to lowest quote, 9 material rating-factor edits were observed, declared mileage decreased during the journey. The risk score is 0.909, and the recommended action is: Escalate for manual review. This does not prove fraud, but supports referral triage.", "quotes": [{"driver_age": 24, "driver_experience": 2, "previous_accidents": 2, "annual_mileage": 18, "car_age": 5, "premium": 1420, "quote_time": "2026-03-01T09:00"}, {"driver_age": 24, "driver_experience": 3, "previous_accidents": 1, "annual_mileage": 14, "car_age": 5, "premium": 1160, "quote_time": "2026-03-01T09:11"}, {"driver_age": 25, "driver_experience": 4, "previous_accidents": 0, "annual_mileage": 10, "car_age": 5, "premium": 840, "quote_time": "2026-03-01T09:19"}, {"driver_age": 25, "driver_experience": 5, "previous_accidents": 0, "annual_mileage": 8, "car_age": 5, "premium": 710, "quote_time": "2026-03-01T09:26"}], "customer_id": 7731}, {"risk_score": 0.907, "flag": true, "recommended_action": "Escalate for manual review", "evidence": {"customer_id": 5093, "risk_score": 0.907, "recommended_action": "Escalate for manual review", "n_quotes": 4, "first_to_lowest_premium_drop_pct": 34.75, "largest_single_drop_pct": 13.56, "material_edit_count": 4, "suspicious_field_edit_count": 4, "suspicious_step_ratio": 1.0, "mileage_decrease_count": 3, "accident_decrease_count": 0, "experience_increase_count": 1, "age_band_cross_count": 0, "consistency_violation_count": 0, "quote_sequence": [{"quote_number": 1, "driver_age": 22, "driver_experience": 3, "previous_accidents": 0, "annual_mileage": 20, "premium": 1180, "changed_fields": [], "suspicious_premium_lowering_fields": []}, {"quote_number": 2, "driver_age": 22, "driver_experience": 3, "previous_accidents": 0, "annual_mileage": 16, "premium": 1040, "changed_fields": ["annual_mileage"], "suspicious_premium_lowering_fields": ["annual_mileage"]}, {"quote_number": 3, "driver_age": 23, "driver_experience": 4, "previous_accidents": 0, "annual_mileage": 12, "premium": 880, "changed_fields": ["annual_mileage", "driver_experience", "driver_age"], "suspicious_premium_lowering_fields": ["annual_mileage", "driver_experience"]}, {"quote_number": 4, "driver_age": 23, "driver_experience": 4, "previous_accidents": 0, "annual_mileage": 9, "premium": 770, "changed_fields": ["annual_mileage"], "suspicious_premium_lowering_fields": ["annual_mileage"]}]}, "explanation": "This journey was flagged for review because 4 quote attempts were made, the premium reduced by 34.75% from first to lowest quote, 4 material rating-factor edits were observed, declared mileage decreased during the journey. The risk score is 0.907, and the recommended action is: Escalate for manual review. This does not prove fraud, but supports referral triage.", "quotes": [{"driver_age": 22, "driver_experience": 3, "previous_accidents": 0, "annual_mileage": 20, "car_age": 5, "premium": 1180, "quote_time": "2026-03-01T08:00"}, {"driver_age": 22, "driver_experience": 3, "previous_accidents": 0, "annual_mileage": 16, "car_age": 5, "premium": 1040, "quote_time": "2026-03-01T08:14"}, {"driver_age": 23, "driver_experience": 4, "previous_accidents": 0, "annual_mileage": 12, "car_age": 5, "premium": 880, "quote_time": "2026-03-01T08:25"}, {"driver_age": 23, "driver_experience": 4, "previous_accidents": 0, "annual_mileage": 9, "car_age": 5, "premium": 770, "quote_time": "2026-03-01T08:33"}], "customer_id": 5093}, {"risk_score": 0.814, "flag": true, "recommended_action": "Escalate for manual review", "evidence": {"customer_id": 6620, "risk_score": 0.814, "recommended_action": "Escalate for manual review", "n_quotes": 3, "first_to_lowest_premium_drop_pct": 28.57, "largest_single_drop_pct": 16.33, "material_edit_count": 5, "suspicious_field_edit_count": 5, "suspicious_step_ratio": 1.0, "mileage_decrease_count": 2, "accident_decrease_count": 1, "experience_increase_count": 1, "age_band_cross_count": 1, "consistency_violation_count": 0, "quote_sequence": [{"quote_number": 1, "driver_age": 39, "driver_experience": 12, "previous_accidents": 1, "annual_mileage": 16, "premium": 980, "changed_fields": [], "suspicious_premium_lowering_fields": []}, {"quote_number": 2, "driver_age": 39, "driver_experience": 12, "previous_accidents": 0, "annual_mileage": 13, "premium": 820, "changed_fields": ["annual_mileage", "previous_accidents"], "suspicious_premium_lowering_fields": ["annual_mileage", "previous_accidents"]}, {"quote_number": 3, "driver_age": 40, "driver_experience": 14, "previous_accidents": 0, "annual_mileage": 11, "premium": 700, "changed_fields": ["annual_mileage", "driver_experience", "driver_age"], "suspicious_premium_lowering_fields": ["annual_mileage", "driver_experience", "driver_age"]}]}, "explanation": "This journey was flagged for review because the premium reduced by 28.57% from first to lowest quote, 5 material rating-factor edits were observed, declared mileage decreased during the journey, previous accident count decreased during the journey. The risk score is 0.814, and the recommended action is: Escalate for manual review. This does not prove fraud, but supports referral triage.", "quotes": [{"driver_age": 39, "driver_experience": 12, "previous_accidents": 1, "annual_mileage": 16, "car_age": 5, "premium": 980, "quote_time": "2026-03-01T11:00"}, {"driver_age": 39, "driver_experience": 12, "previous_accidents": 0, "annual_mileage": 13, "car_age": 5, "premium": 820, "quote_time": "2026-03-01T11:18"}, {"driver_age": 40, "driver_experience": 14, "previous_accidents": 0, "annual_mileage": 11, "car_age": 5, "premium": 700, "quote_time": "2026-03-01T11:33"}], "customer_id": 6620}, {"risk_score": 0.638, "flag": true, "recommended_action": "Request additional validation", "evidence": {"customer_id": 4188, "risk_score": 0.638, "recommended_action": "Request additional validation", "n_quotes": 3, "first_to_lowest_premium_drop_pct": 20.0, "largest_single_drop_pct": 10.0, "material_edit_count": 4, "suspicious_field_edit_count": 4, "suspicious_step_ratio": 1.0, "mileage_decrease_count": 2, "accident_decrease_count": 1, "experience_increase_count": 1, "age_band_cross_count": 0, "consistency_violation_count": 0, "quote_sequence": [{"quote_number": 1, "driver_age": 27, "driver_experience": 6, "previous_accidents": 1, "annual_mileage": 15, "premium": 900, "changed_fields": [], "suspicious_premium_lowering_fields": []}, {"quote_number": 2, "driver_age": 27, "driver_experience": 6, "previous_accidents": 1, "annual_mileage": 12, "premium": 810, "changed_fields": ["annual_mileage"], "suspicious_premium_lowering_fields": ["annual_mileage"]}, {"quote_number": 3, "driver_age": 27, "driver_experience": 7, "previous_accidents": 0, "annual_mileage": 10, "premium": 720, "changed_fields": ["annual_mileage", "previous_accidents", "driver_experience"], "suspicious_premium_lowering_fields": ["annual_mileage", "previous_accidents", "driver_experience"]}]}, "explanation": "This journey was flagged for review because the premium reduced by 20.0% from first to lowest quote, 4 material rating-factor edits were observed, declared mileage decreased during the journey, previous accident count decreased during the journey. The risk score is 0.638, and the recommended action is: Request additional validation. This does not prove fraud, but supports referral triage.", "quotes": [{"driver_age": 27, "driver_experience": 6, "previous_accidents": 1, "annual_mileage": 15, "car_age": 5, "premium": 900, "quote_time": "2026-03-01T14:00"}, {"driver_age": 27, "driver_experience": 6, "previous_accidents": 1, "annual_mileage": 12, "car_age": 5, "premium": 810, "quote_time": "2026-03-01T14:25"}, {"driver_age": 27, "driver_experience": 7, "previous_accidents": 0, "annual_mileage": 10, "car_age": 5, "premium": 720, "quote_time": "2026-03-01T14:47"}], "customer_id": 4188}, {"risk_score": 0.582, "flag": true, "recommended_action": "Prompt customer to confirm details", "evidence": {"customer_id": 2044, "risk_score": 0.582, "recommended_action": "Prompt customer to confirm details", "n_quotes": 3, "first_to_lowest_premium_drop_pct": 17.14, "largest_single_drop_pct": 10.48, "material_edit_count": 3, "suspicious_field_edit_count": 4, "suspicious_step_ratio": 1.0, "mileage_decrease_count": 2, "accident_decrease_count": 0, "experience_increase_count": 1, "age_band_cross_count": 1, "consistency_violation_count": 0, "quote_sequence": [{"quote_number": 1, "driver_age": 24, "driver_experience": 5, "previous_accidents": 1, "annual_mileage": 12, "premium": 1050, "changed_fields": [], "suspicious_premium_lowering_fields": []}, {"quote_number": 2, "driver_age": 24, "driver_experience": 5, "previous_accidents": 1, "annual_mileage": 10, "premium": 980, "changed_fields": ["annual_mileage"], "suspicious_premium_lowering_fields": ["annual_mileage"]}, {"quote_number": 3, "driver_age": 25, "driver_experience": 6, "previous_accidents": 1, "annual_mileage": 9, "premium": 870, "changed_fields": ["annual_mileage", "driver_experience", "driver_age"], "suspicious_premium_lowering_fields": ["annual_mileage", "driver_experience", "driver_age"]}]}, "explanation": "This journey was flagged for review because the premium reduced by 17.14% from first to lowest quote, 3 material rating-factor edits were observed, declared mileage decreased during the journey, declared driving experience increased during the journey. The risk score is 0.582, and the recommended action is: Prompt customer to confirm details. This does not prove fraud, but supports referral triage.", "quotes": [{"driver_age": 24, "driver_experience": 5, "previous_accidents": 1, "annual_mileage": 12, "car_age": 5, "premium": 1050, "quote_time": "2026-03-01T09:00"}, {"driver_age": 24, "driver_experience": 5, "previous_accidents": 1, "annual_mileage": 10, "car_age": 5, "premium": 980, "quote_time": "2026-03-01T09:40"}, {"driver_age": 25, "driver_experience": 6, "previous_accidents": 1, "annual_mileage": 9, "car_age": 5, "premium": 870, "quote_time": "2026-03-01T10:10"}], "customer_id": 2044}, {"risk_score": 0.571, "flag": true, "recommended_action": "Prompt customer to confirm details", "evidence": {"customer_id": 8812, "risk_score": 0.571, "recommended_action": "Prompt customer to confirm details", "n_quotes": 3, "first_to_lowest_premium_drop_pct": 16.83, "largest_single_drop_pct": 10.89, "material_edit_count": 3, "suspicious_field_edit_count": 4, "suspicious_step_ratio": 1.0, "mileage_decrease_count": 2, "accident_decrease_count": 1, "experience_increase_count": 1, "age_band_cross_count": 0, "consistency_violation_count": 0, "quote_sequence": [{"quote_number": 1, "driver_age": 31, "driver_experience": 9, "previous_accidents": 2, "annual_mileage": 14, "premium": 1010, "changed_fields": [], "suspicious_premium_lowering_fields": []}, {"quote_number": 2, "driver_age": 31, "driver_experience": 9, "previous_accidents": 1, "annual_mileage": 12, "premium": 900, "changed_fields": ["annual_mileage", "previous_accidents"], "suspicious_premium_lowering_fields": ["annual_mileage", "previous_accidents"]}, {"quote_number": 3, "driver_age": 31, "driver_experience": 10, "previous_accidents": 1, "annual_mileage": 11, "premium": 840, "changed_fields": ["annual_mileage", "driver_experience"], "suspicious_premium_lowering_fields": ["annual_mileage", "driver_experience"]}]}, "explanation": "This journey was flagged for review because the premium reduced by 16.83% from first to lowest quote, 3 material rating-factor edits were observed, declared mileage decreased during the journey, previous accident count decreased during the journey. The risk score is 0.571, and the recommended action is: Prompt customer to confirm details. This does not prove fraud, but supports referral triage.", "quotes": [{"driver_age": 31, "driver_experience": 9, "previous_accidents": 2, "annual_mileage": 14, "car_age": 5, "premium": 1010, "quote_time": "2026-03-01T16:00"}, {"driver_age": 31, "driver_experience": 9, "previous_accidents": 1, "annual_mileage": 12, "car_age": 5, "premium": 900, "quote_time": "2026-03-01T16:30"}, {"driver_age": 31, "driver_experience": 10, "previous_accidents": 1, "annual_mileage": 11, "car_age": 5, "premium": 840, "quote_time": "2026-03-01T17:05"}], "customer_id": 8812}];
+const CID = {honest:101, nudger:204, manipulator:662};
+
+const $=(id)=>document.getElementById(id);
+const esc=(s)=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function band(score){
+  if(score<0.30) return {cls:"low", label:"Low"};
+  if(score<0.60) return {cls:"med", label:"Elevated"};
+  if(score<0.80) return {cls:"high", label:"High"};
+  return {cls:"high", label:"Very high"};
+}
+function sigSummary(ev){
+  const parts=[];
+  if(ev.first_to_lowest_premium_drop_pct>0) parts.push("premium −"+ev.first_to_lowest_premium_drop_pct+"%");
+  if(ev.mileage_decrease_count>0) parts.push("mileage cut");
+  if(ev.accident_decrease_count>0) parts.push("accidents removed");
+  if(ev.experience_increase_count>0) parts.push("experience raised");
+  if(ev.age_band_cross_count>0) parts.push("age band crossed");
+  return parts.slice(0,3).join(" · ") || ev.n_quotes+" attempts";
+}
+function chipHTML(ev){
+  const out=[`<span class="chip"><span class="n">${ev.n_quotes}</span> attempts</span>`];
+  if(ev.first_to_lowest_premium_drop_pct>0) out.push(`<span class="chip warn">premium fell <span class="n">${ev.first_to_lowest_premium_drop_pct}%</span></span>`);
+  if(ev.material_edit_count>0) out.push(`<span class="chip warn"><span class="n">${ev.material_edit_count}</span> material edits</span>`);
+  if(ev.mileage_decrease_count>0) out.push(`<span class="chip warn">mileage cut <span class="n">${ev.mileage_decrease_count}×</span></span>`);
+  if(ev.accident_decrease_count>0) out.push(`<span class="chip warn">accidents removed <span class="n">${ev.accident_decrease_count}×</span></span>`);
+  if(ev.experience_increase_count>0) out.push(`<span class="chip warn">experience raised <span class="n">${ev.experience_increase_count}×</span></span>`);
+  if(ev.age_band_cross_count>0) out.push(`<span class="chip warn">age crossed a pricing band</span>`);
+  return out.join("");
+}
+function journeyTable(ev){
+  const rows = ev.quote_sequence.map((s,i)=>{
+    const susp = s.suspicious_premium_lowering_fields||[];
+    const c=(f,v)=>`<td class="${susp.includes(f)?'down':''}">${v}</td>`;
+    return `<tr><td class="num">${i+1}</td>${c('driver_age',s.driver_age)}${c('driver_experience',s.driver_experience+'y')}${c('previous_accidents',s.previous_accidents)}${c('annual_mileage',s.annual_mileage+'k')}<td class="num">£${Number(s.premium).toLocaleString()}</td></tr>`;
+  }).join("");
+  return `<div class="jwrap"><table class="jtbl"><thead><tr><th>#</th><th>Age</th><th>Exp</th><th>Acc</th><th>Mileage</th><th>Premium</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function verdictHTML(r, animate){
+  const pct=Math.round(r.risk_score*100), b=band(r.risk_score);
+  const why = (r.flag && r.explanation)
+    ? `<div class="why"><h4>Why it was flagged</h4><p>${esc(r.explanation)}</p></div>`
+    : `<div class="why"><h4>Assessment</h4><p>No manipulation signals stood out — this reads like normal shopping, so it is not sent for review.</p></div>`;
+  return `<div class="verdict">
+    <div class="v-top">
+      <div><div class="v-score"><span class="s num" data-count="${pct}">${animate?0:pct}</span><small class="num">/ 100 risk</small></div>
+      <div class="v-cap">model-estimated likelihood the journey is suspicious</div></div>
+      <div class="pill b-${b.cls}"><span class="d"></span>${b.label} · ${r.flag?'flagged':'cleared'}</div>
+    </div>
+    <div class="meter f-${b.cls}"><span class="ft"></span><span class="mk" style="left:${animate?0:pct}%"></span></div>
+    <div class="scale"><span>0 · normal</span><span>50 · flag line</span><span>100 · suspicious</span></div>
+    <div class="v-action"><span class="lbl">Action</span> <b>${esc(r.recommended_action)}</b></div>
+    <div class="chips">${chipHTML(r.evidence)}</div>
+    ${why}
+  </div>`;
+}
+function animateVerdict(container, pct){
+  const s=container.querySelector('.v-score .s'), mk=container.querySelector('.mk');
+  const t0=performance.now();
+  requestAnimationFrame(function tick(now){
+    const k=Math.min(1,(now-t0)/600);
+    s.textContent=Math.round(pct*k);
+    if(k<1) requestAnimationFrame(tick); else s.textContent=pct;
+  });
+  requestAnimationFrame(()=>{ mk.style.left=pct+'%'; });
+}
+
+/* KPIs */
+function renderKPIs(){
+  const n=QUEUE.length;
+  const esc=QUEUE.filter(r=>r.recommended_action.startsWith("Escalate")).length;
+  const avg=Math.round(QUEUE.reduce((a,r)=>a+r.risk_score,0)/n*100);
+  $("kpis").innerHTML = [
+    ["In queue", n, ""],
+    ["Escalations", esc, "highest band"],
+    ["Avg risk", avg, "<small>/100</small>"],
+    ["Model", "RF", "<small>PR-AUC</small>"],
+  ].map(([k,v,x])=>`<div class="kpi"><div class="k">${k}</div><div class="v">${v} ${x}</div></div>`).join("");
+}
+
+/* Queue */
+function renderQueue(){
+  const host=$("queue");
+  host.innerHTML="";
+  QUEUE.forEach((r,i)=>{
+    const b=band(r.risk_score), pct=Math.round(r.risk_score*100);
+    const row=document.createElement("button");
+    row.className="q-row";
+    row.innerHTML=`<span class="q-rank">${i+1}</span>
+      <span class="q-cust"><div class="id">#${r.customer_id}</div><div class="sig">${esc(sigSummary(r.evidence))}</div></span>
+      <span class="q-risk f-${b.cls}"><span class="mini"><i style="width:${pct}%"></i></span><span class="p">${pct}</span></span>
+      <span class="q-action"><span class="pill b-${b.cls}"><span class="d"></span>${esc(r.recommended_action)}</span></span>`;
+    const detail=document.createElement("div");
+    detail.className="q-detail"; detail.hidden=true;
+    row.addEventListener("click",()=>{
+      if(detail.hidden){ detail.innerHTML=journeyTable(r.evidence)+verdictHTML(r,false); }
+      detail.hidden=!detail.hidden;
+    });
+    host.appendChild(row); host.appendChild(detail);
+  });
+}
+
+/* Scorer editor */
+let rows = [];
+let loadedPreset = null;
+function fmtTime(i){ const m=9*60+i*14; return `2026-03-01T${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}:00`; }
+function editorRow(q,i){
+  return `<tr data-i="${i}">
+    <td class="num" style="text-align:center;color:var(--muted)">${i+1}</td>
+    <td><input type="number" data-f="driver_age" value="${q.driver_age}"></td>
+    <td><input type="number" data-f="driver_experience" value="${q.driver_experience}"></td>
+    <td><input type="number" data-f="previous_accidents" value="${q.previous_accidents}"></td>
+    <td><input type="number" step="0.5" data-f="annual_mileage" value="${q.annual_mileage}"></td>
+    <td><input type="number" data-f="premium" value="${q.premium}"></td>
+    <td>${rows.length>1?'<button class="rm" title="remove">×</button>':''}</td></tr>`;
+}
+function renderEditor(){ $("editorBody").innerHTML = rows.map(editorRow).join(""); }
+function readEditor(){
+  document.querySelectorAll("#editorBody tr").forEach(tr=>{
+    const i=+tr.dataset.i;
+    tr.querySelectorAll("input").forEach(inp=>{ rows[i][inp.dataset.f]= inp.value===""?0:Number(inp.value); });
+  });
+}
+function loadPreset(name){
+  rows = PRESETS[name].quotes.map(q=>({...q}));
+  loadedPreset = name;
+  renderEditor();
+  $("scoreResult").hidden=true; $("scoreHint").textContent="";
+}
+function markEdited(){ loadedPreset=null; }
+
+async function scoreJourney(){
+  readEditor();
+  const payload={ customer_id: loadedPreset?CID[loadedPreset]:1, quotes: rows.map((q,i)=>({...q, quote_time:q.quote_time||fmtTime(i)})) };
+  $("scoreHint").textContent="Scoring…";
+  let r=null, source="";
+  try{
+    const sr=await fetch("/score",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    if(!sr.ok) throw 0;
+    const s=await sr.json();
+    let explanation=null;
+    if(s.flag){ const er=await fetch("/explain",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(s.case_evidence)}); if(er.ok) explanation=(await er.json()).explanation; }
+    r={risk_score:s.risk_score,flag:s.flag,recommended_action:s.recommended_action,evidence:s.case_evidence,explanation}; source="live";
+  }catch(e){
+    if(loadedPreset){ r=PRESETS[loadedPreset].result; source="sample"; }
+  }
+  if(!r){
+    $("scoreHint").textContent="Custom journeys score live when the console runs against the API. Load an example to see a result in this preview.";
+    $("scoreResult").hidden=true; return;
+  }
+  $("scoreHint").textContent = source==="live" ? "● scored live by the model" : "● sample result (runs live against the API)";
+  const box=$("scoreResult"); box.hidden=false; box.innerHTML=verdictHTML(r,true);
+  animateVerdict(box, Math.round(r.risk_score*100));
+}
+
+/* wire up */
+$("editorBody").addEventListener("input",markEdited);
+$("editorBody").addEventListener("click",e=>{ if(e.target.classList.contains("rm")){ const i=+e.target.closest("tr").dataset.i; rows.splice(i,1); loadedPreset=null; renderEditor(); }});
+$("addRow").addEventListener("click",()=>{ const last=rows[rows.length-1]||{driver_age:30,driver_experience:8,previous_accidents:0,annual_mileage:10,premium:700}; rows.push({...last, quote_time:fmtTime(rows.length)}); loadedPreset=null; renderEditor(); });
+document.querySelectorAll(".preset").forEach(b=>b.addEventListener("click",()=>loadPreset(b.dataset.load)));
+$("scoreBtn").addEventListener("click",scoreJourney);
+
+renderKPIs(); renderQueue();
+loadPreset("manipulator"); scoreJourney();
+</script>
+</body>
+</html>

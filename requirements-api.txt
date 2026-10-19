@@ -1,0 +1,11 @@
+# Lean runtime dependencies for the served API / container.
+# The full requirements.txt (with jupyter, matplotlib) is for the notebooks.
+# ML stack pinned to the versions the model was trained and tested with, so the
+# saved joblib loads and the features reproduce identically in the container.
+scikit-learn==1.9.1
+numpy==2.5.4
+pandas==3.0.6
+joblib==1.6.0
+pydantic>=2,<3
+fastapi==0.147.0
+uvicorn[standard]==0.54.0

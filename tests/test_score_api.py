@@ -24,6 +24,13 @@ SUSPICIOUS = {
 BENIGN = {"customer_id": 101, "quotes": [_q(45, 20, 0, 9.0, 560, "2026-03-01T09:00:00")]}
 
 
+def test_home_serves_demo_ui():
+    r = client.get("/")
+    assert r.status_code == 200
+    assert "text/html" in r.headers["content-type"]
+    assert "Quote Integrity Console" in r.text
+
+
 def test_model_info_endpoint():
     r = client.get("/model-info")
     assert r.status_code == 200
