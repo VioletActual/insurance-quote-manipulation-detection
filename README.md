@@ -144,7 +144,7 @@ The tests are built to run without calling any paid model, using a built-in dete
 2. Make sure `car_insurance_premium_dataset.csv` is available
 3. Restart the kernel and run all cells
 
-V3 uses a free language model (Llama 3.1 via Groq) for live explanation generation. Set a `GROQ_API_KEY`, or run with the built-in fallback for a key-free version.
+V3 uses a free open-weights model (GPT-OSS 20B via Groq) for live explanation generation. Set a `GROQ_API_KEY`, or run with the built-in fallback for a key-free version.
 
 **Tests (from the project root):**
 

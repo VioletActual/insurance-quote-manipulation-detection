@@ -5,3 +5,5 @@ __pycache__/
 .env
 llm_triage_eval_*.csv
 human_eval_sheet.csv
+.venv/
+.pytest_cache/
