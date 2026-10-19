@@ -1,6 +1,6 @@
 # Container for the Quote Integrity Console + API.
 # Builds a lean image: runtime deps only, the package, and the model artifact.
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 
