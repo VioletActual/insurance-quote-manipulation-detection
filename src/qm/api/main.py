@@ -24,9 +24,11 @@ from __future__ import annotations
 
 import json
 from datetime import datetime
+from pathlib import Path
 from typing import List, Optional
 
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 from src.qm.schema import CaseEvidence
@@ -55,8 +57,20 @@ app = FastAPI(
         "Deterministic and key-free: reuses the project's pydantic contracts, "
         "generator, and evaluation rubric."
     ),
-    version="1.1.0",
+    version="1.2.0",
 )
+
+# The recruiter-facing demo page, served at the site root. /docs stays for engineers.
+_INDEX_HTML = Path(__file__).parent / "static" / "index.html"
+
+
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
+def home():
+    """Plain-English demo UI: pick a journey, see the model's verdict and why."""
+    try:
+        return _INDEX_HTML.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return HTMLResponse("<h1>Quote Manipulation Triage API</h1><p>See <a href='/docs'>/docs</a>.</p>")
 
 
 # ------------------------------ score models -------------------------------

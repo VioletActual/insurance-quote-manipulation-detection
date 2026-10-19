@@ -2,7 +2,9 @@
 
 ![CI](https://github.com/VioletActual/insurance-quote-manipulation-detection/actions/workflows/ci.yml/badge.svg)
 
-**In one line:** an end-to-end system that detects suspicious quote-manipulation behaviour in motor insurance, then uses a language model to write analyst-ready explanations for each flagged case, with automated quality gates, experiment tracking, and CI.
+**Live demo:** _<!-- add the hosted URL here once deployed -->_ · **API docs:** the live URL's `/docs`
+
+**In one line:** an end-to-end system that detects suspicious quote-manipulation behaviour in motor insurance, then writes analyst-ready explanations for each flagged case, served as a FastAPI app with an interactive console, with automated quality gates, experiment tracking, and CI.
 
 It brings together three things usually shown separately: applied machine learning on a realistic imbalanced detection problem, an evaluation pipeline for language-model outputs, and an automated testing setup that runs on every code change.
 
@@ -33,7 +35,7 @@ If you only read one section, read **V3** below. That is the newest work.
 | **API** (`src/qm/api/`) | FastAPI service: scores a raw quote journey, explains a flagged case, and quality-scores explanations | 5 endpoints, interactive `/docs`, key-free |
 | **V3** (`QuoteManipulationV3.ipynb`) | Language-model triage layer that explains flagged cases, with evaluation and tracking | Winning prompt selected by an automated quality gate |
 | **V2** (`QuoteManipulationV2.ipynb`) | The detection model that finds suspicious quote journeys | Random Forest, F1 0.709, PR-AUC 0.811 |
-| **CI** (`.github/workflows/ci.yml`) | Runs the test suite automatically on every push | 66 tests passing |
+| **CI** (`.github/workflows/ci.yml`) | Runs the test suite automatically on every push | 68 tests passing |
 
 Repository layout:
 
@@ -133,9 +135,31 @@ Beyond headline metrics, the notebook reviews where the model goes wrong, which 
 
 ## CI: automated testing
 
-Every time code is pushed to GitHub, a fresh environment is set up automatically and the test suite runs: 66 tests covering the feature engineering, the model scoring, the FastAPI endpoints, the scoring functions, the prompt library, and the pydantic schemas that validate model input and output. The green badge at the top of this page shows the current status.
+Every time code is pushed to GitHub, a fresh environment is set up automatically and the test suite runs: 68 tests covering the feature engineering, the model scoring, the FastAPI endpoints, the scoring functions, the prompt library, and the pydantic schemas that validate model input and output. The green badge at the top of this page shows the current status.
 
 The tests are built to run without calling any paid model, using a built-in deterministic fallback. That keeps the automated checks free, fast, and reliable, and means they never depend on an external key.
+
+---
+
+## Architecture
+
+```mermaid
+flowchart LR
+    J["Quote journey<br/>(the attempts)"] --> F["Feature engineering<br/>31 behavioural features"]
+    F --> M["Random Forest<br/>selected by PR-AUC"]
+    M --> S{"risk &ge; flag line?"}
+    S -- "no" --> C["Cleared"]
+    S -- "yes" --> E["Evidence<br/>(typed, validated)"]
+    E --> G["Grounded explainer<br/>no accusations, numbers from evidence"]
+    G --> Q["Referral queue<br/>ranked, with reasons"]
+    E -.-> V["Rubric scorer<br/>quality gate"]
+    V -.-> G
+
+    classDef box fill:#eef1f6,stroke:#c7cfdb,color:#222;
+    class J,F,M,E,G,Q,V box;
+```
+
+All of this is served over HTTP: `POST /score` runs the top row (journey to model to evidence), `POST /explain` runs the generation step, and `POST /evaluate` is the rubric gate. A browser hitting `/` gets the interactive console; `/docs` is the technical API explorer.
 
 ---
 
@@ -145,6 +169,7 @@ The whole pipeline is served over HTTP by a small FastAPI app that reuses the ex
 
 | Endpoint | What it does |
 |----------|--------------|
+| `GET /` | Interactive console: KPI strip, live referral queue, and a journey scorer (for non-technical viewers) |
 | `GET /health` | Liveness check |
 | `GET /model-info` | Which model backs scoring (Random Forest, selected by PR-AUC) and its flag threshold |
 | `POST /score` | A raw quote journey in: reconstructs the per-step edits, builds the 31 journey features, runs the model, and returns the risk score, flag, recommended action, and a `CaseEvidence` payload |
@@ -176,7 +201,14 @@ V3 uses a free open-weights model (GPT-OSS 20B via Groq) for live explanation ge
     pip install -r requirements.txt
     PYTHONPATH=. uvicorn src.qm.api.main:app --reload
 
-Then open `http://127.0.0.1:8000/docs` for the interactive endpoint explorer.
+Open `http://127.0.0.1:8000/` for the console, or `/docs` for the endpoint explorer.
+
+**Docker (the deployable image):**
+
+    docker build -t quote-console .
+    docker run -p 7860:7860 quote-console
+
+Then open `http://127.0.0.1:7860/`. The image installs only the lean runtime dependencies in `requirements-api.txt` and ships the trained model, so it runs the same anywhere a container runs.
 
 ---
 
@@ -189,6 +221,8 @@ A natural next step on the evaluation side would be to classify the language mod
 ---
 
 ## Changelog
+
+**v4.1** — Added an interactive console at `/` (KPI strip, a live referral queue, and an editable journey scorer) for non-technical viewers, with `/docs` kept as the technical view. Containerised the service (Dockerfile + lean `requirements-api.txt`) so it deploys anywhere, and added an architecture diagram.
 
 **v4.0** — Served the detection + explanation pipeline as a FastAPI app (`/score`, `/explain`, `/evaluate`, `/health`, `/model-info`). The trained model is saved as a reproducible joblib artifact and loaded by `/score`; a raw quote journey is turned into the 31 model features by code lifted from the notebook, so the served features match training exactly. Fixed the notebook's model selection to use PR-AUC (its stated primary metric) rather than F1, so it consistently selects the Random Forest the README describes. 21 tests added (features, scoring, the `/score` endpoint, and the `/score` to `/explain` chain), all covered by CI.
 
